@@ -86,3 +86,12 @@ export async function jugarHasta(j: Jugador, n: number): Promise<void> {
 		if (res.status >= 400) throw new Error(`paso ${i}: ${res.status} ${await res.text()}`);
 	}
 }
+
+/** La petición final válida: POST disfrazado de BREW. `extra` agrega o pisa headers. */
+export function brew(j: Jugador, extra: Record<string, string> = {}, body = "start"): Promise<Response> {
+	return j.pedir("/cafetera", {
+		method: "POST",
+		headers: { "X-HTTP-Method-Override": "BREW", "Content-Type": "message/coffeepot", "Accept-Additions": "leche", ...extra },
+		body,
+	});
+}

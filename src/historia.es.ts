@@ -1,3 +1,5 @@
+import type { Final } from "./tipos";
+
 /** Formato común de una escena: hora, lugar, cuerpo y siguiente paso. */
 export function escena(hora: string, lugar: string, cuerpo: string, siguiente?: string): string {
 	return `[${hora}] ${lugar}\n\n${cuerpo}\n${siguiente ? `\n==> Siguiente: ${siguiente}\n` : ""}`;
@@ -202,5 +204,48 @@ En la pantalla, un texto chiquito: «Compatible con HTCPCP/1.0 (RFC 2324)».`,
 		`la cafetera quiere que le hables en su idioma. Averigua qué es HTCPCP;
     el endpoint es /cafetera.`,
 	),
+	soloBrew: `La cafetera solo entiende un método: BREW (lo dice el header Allow).
+Pero el edificio no deja pasar métodos raros: con -X BREW lo más probable
+es que te conteste un 501 antes de llegar a la cafetera.
+Hay un header para disfrazar un POST de otro método: X-HTTP-Method-Override.`,
+	soloCoffeepot: "La cafetera solo acepta Content-Type: message/coffeepot. Lo dice el RFC 2324.",
+	sinAdiciones: "«¿Así, sin nada?» Dile qué le agregas con el header Accept-Additions (leche, azúcar, lo que sea).",
+	sinStart: "El cuerpo debe decir start. (RFC 2324: start o stop. stop no te sirve de nada.)",
+	final: (final: Final, nombre: string, receta: string) =>
+		final === 218
+			? escena(
+					"09:13",
+					"La cafetera",
+					`Producción sigue en llamas. Suenan los teléfonos. Alguien grita en el piso 4.
+Tú te sirves un café, te sientas y sonríes.
+
+218 This is fine.
+
+Final secreto. El perro estaría orgulloso.`,
+				)
+			: final === 200
+				? escena(
+						"09:13",
+						"La cafetera",
+						`Cargas la receta: ${receta}.
+La máquina se calla. Huele a café. Café de verdad.
+
+Llegas a la daily a las 9:14, ${nombre}, con una taza en la mano y producción
+funcionando. Nadie sabe cómo lo lograste.
+
+200 OK. Final verdadero.`,
+					)
+				: escena(
+						"09:13",
+						"La cafetera",
+						`La máquina zumba, vibra... y sale agua caliente. Solo agua.
+En un costado, una etiqueta: «Modelo: TETERA 3000».
+
+418 I'm a teapot. Llegas a la daily con un té.
+
+Final normal. Dicen que la cafetera de verdad necesita una receta completa
+(5 partes, en un header X-Receta)... y que hay quien se toma el café
+mientras todo arde.`,
+					),
 	// (los textos de cada tarea se agregan arriba de esta línea)
 };
