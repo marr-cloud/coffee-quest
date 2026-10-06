@@ -273,5 +273,32 @@ mientras todo arde.`,
 		"SPOILERS: el juego entero resuelto. Corre las carpetas en orden: Camino, Final 418, Final 218 y Final 200. El 200 atiende el incidente, así que después de él ya no se puede el 218 con ese gafete. En Postman los scripts guardan solos los fragmentos y el token; en otros clientes quizá tengas que copiarlos a mano.",
 	carpetaFinal218: "Necesita el incidente abierto: córrela antes de Final 200.",
 	carpetaFinal200: "Atiende el incidente (fragmento 5) y entrega la receta completa en X-Receta.",
+	portada: {
+		titulo: "Coffee Quest",
+		descripcion: "Un juego que se juega con curl: consigue un café antes de la daily.",
+		gancho: "Este juego no se juega aquí. Se juega en tu terminal.",
+		intro:
+			"Son las 8:59, tu daily es a las 9:15 y la cafetera del piso 3 está rota. Consigue un café usando solo curl: headers, cookies, redirects, JSON, auth... y un protocolo para cafeteras que existe de verdad.",
+		nota: "¿PowerShell? Usa curl.exe.",
+		copiar: "Copiar",
+		copiado: "Copiado",
+		copiarFallo: "Selecciona y copia",
+		trofeos: [
+			["418", "Final normal"],
+			["200", "Final verdadero"],
+			["???", "Secreto"],
+		] as [string, string][],
+		/** Alterna texto y código: los índices impares van dentro de <code>. */
+		negociacion: [
+			"Tu navegador pidió",
+			"Accept: text/html",
+			"y recibió esta página. curl pide",
+			"*/*",
+			"y recibe el juego. Eso es content negotiation.",
+		],
+		coleccion: "¿Prefieres Postman, Bruno o Insomnia?",
+		coleccionLink: "Descarga la colección",
+		alt: "Oficina a las 8:59: un empleado con ojeras y una taza vacía, una cafetera rota echando humo con un post-it pegado y, al fondo, una puerta entreabierta con un brillo naranja.",
+	},
 	// (los textos de cada tarea se agregan arriba de esta línea)
 };
