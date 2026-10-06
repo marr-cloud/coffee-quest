@@ -11,6 +11,12 @@
 	"main": "src/index.ts",
 	"compatibility_date": "2026-08-31",
 	"compatibility_flags": ["nodejs_compat"],
+	/**
+	 * Custom domain: Cloudflare crea el registro DNS y el certificado. workers.dev sigue activo a propósito.
+	 * https://developers.cloudflare.com/workers/configuration/routing/custom-domains/
+	 */
+	"routes": [{ "pattern": "cafe.maurrod.dev", "custom_domain": true }],
+	"workers_dev": true,
 	"upload_source_maps": true,
 	/**
 	 * Observability

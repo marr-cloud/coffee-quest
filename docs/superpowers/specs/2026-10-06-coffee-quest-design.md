@@ -221,3 +221,5 @@ Vitest dentro de workerd (`@cloudflare/vitest-plugin`, como la plantilla), con T
 - Cookies `Secure` con `-L -b -c` a través del 301: sí. El 301 trae `Set-Cookie` y el `HEAD` siguiente avanza con esa cookie.
 - `curl.exe` en PowerShell 7: el nivel 2 con comillas llega entero (`&` incluido) y `--data-urlencode` del nivel 11 también.
 - Primer deploy: wrangler exige el secreto requerido antes de crear el Worker, así que se usa `--secrets-file` (ver README).
+- Custom domain `cafe.maurrod.dev` activo (2026-10-06): `scripts/partida.sh` 39/39 contra el dominio; `maurrod.dev` y `www`
+  siguen respondiendo igual. `workers.dev` queda activo a propósito (`workers_dev: true`).
