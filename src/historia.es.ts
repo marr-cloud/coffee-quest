@@ -3,6 +3,8 @@ export function escena(hora: string, lugar: string, cuerpo: string, siguiente?: 
 	return `[${hora}] ${lugar}\n\n${cuerpo}\n${siguiente ? `\n==> Siguiente: ${siguiente}\n` : ""}`;
 }
 
+/** Credenciales de TI del juego: salen en un post-it del nivel 5. Son parte del acertijo, no un secreto. */
+export const TI = { usuario: "becario", clave: "cafeina123" } as const;
 export const H = {
 	sinGafete: "Sin gafete el torniquete no gira.\nVuelve a recepción por uno (y guárdalo con -c cookies.txt).",
 	gafeteFalso:
@@ -66,5 +68,36 @@ De aquí en adelante usa siempre  -b cookies.txt -c cookies.txt
 			`entra al piso 3:
     curl -b cookies.txt -c cookies.txt ${o}/piso/3`,
 		),
+	nivel4: (o: string) =>
+		escena(
+			"09:03",
+			"Piso 3",
+			`Un cartel: «La cocina se mudó al fondo del pasillo». Y una flecha.
+
+Eso que recibiste es un 301 Moved Permanently: el servidor te dice que
+lo que buscas está en otra parte (mira el header Location). curl no
+sigue flechas a menos que se lo pidas con -L.`,
+			`repite con -L. Y ya que estás, agrega -i: muestra los headers de la
+    respuesta, y en este edificio la gente deja cosas en los headers.
+    curl -i -L -b cookies.txt -c cookies.txt ${o}/piso/3`,
+		),
+	otroPiso: (n: string) =>
+		`${n === "2" ? "Contabilidad. Ahí no hay café, solo Excel." : n === "1" ? "En el piso 1 solo hay una planta de plástico." : `El piso ${n.slice(0, 10)} no existe o no tiene café.`} Tu equipo está en el 3.`,
+	cocina: (o: string) =>
+		escena(
+			"09:04",
+			"Cocina del piso 3",
+			`La cafetera tiene un papel: «FUERA DE SERVICIO desde 2019».
+Detrás hay algo pegado. No está en el cuerpo de esta respuesta:
+está en los headers.`,
+			`pide solo los headers con -I (eso hace una petición HEAD):
+    curl -I -b cookies.txt -c cookies.txt ${o}/piso/3/cocina`,
+		),
+	postIts: {
+		"X-Post-It-1": "Cafetera rota. La buena esta en TI, pero TI no presta nada sin papeleo de RRHH.",
+		"X-Post-It-2": 'RRHH: POST /rrhh/solicitud con JSON {"motivo": "...", "urgencia": 1-10}',
+		"X-Post-It-3": `TI -> usuario: ${TI.usuario} / clave: ${TI.clave} (no se lo digas a nadie)`,
+		"X-Post-It-4": "El Content-Type importa. RRHH no lee lo que no entiende.",
+	} as Record<string, string>,
 	// (los textos de cada tarea se agregan arriba de esta línea)
 };
