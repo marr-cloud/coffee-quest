@@ -209,3 +209,15 @@ Vitest dentro de workerd (`@cloudflare/vitest-plugin`, como la plantilla), con T
 - `Accept-Additions`, `X-Mood` y `X-HTTP-Method-Override` llegan intactos al Worker.
 - Cookies `Secure` y el flujo `-b/-c` funcionan con `-L` a través del redirect del nivel 4.
 - `curl.exe` en PowerShell con las comillas que sugieren los textos de los niveles 2 y 11.
+
+### Resultados (2026-10-06, coffee-quest.meitrix8208.workers.dev)
+
+- `-X BREW`: **501** de Cloudflare antes de llegar al Worker (también en `wrangler dev`). El override funciona.
+- Línea de estado con `--http1.1`: `418 I'm a teapot` y `200 OK` se ven bien; el **218 sale como `HTTP/1.1 218 <none>`**. El edge
+  arma la línea con su propia tabla y descarta el `statusText` del Worker para códigos no oficiales (en local sí se ve
+  `218 This is fine`). El cuerpo lo dice igual, así que el final no cambia.
+- `X-HTTP-Method-Override`, `Accept-Additions`, `X-Mood` y `X-Receta` llegan intactos: los tres finales pasaron con
+  `scripts/partida.sh` (39 pasos ok).
+- Cookies `Secure` con `-L -b -c` a través del 301: sí. El 301 trae `Set-Cookie` y el `HEAD` siguiente avanza con esa cookie.
+- `curl.exe` en PowerShell 7: el nivel 2 con comillas llega entero (`&` incluido) y `--data-urlencode` del nivel 11 también.
+- Primer deploy: wrangler exige el secreto requerido antes de crear el Worker, así que se usa `--secrets-file` (ver README).

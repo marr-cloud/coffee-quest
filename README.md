@@ -42,8 +42,13 @@ Hasta que exista `GAFETE_SECRET` (32 caracteres o más) el Worker responde 500: 
 
 ```sh
 npx wrangler login
+
+# Primer deploy: el Worker todavía no existe, así que el secreto va en un archivo temporal que se borra al final.
+node -e "require('fs').writeFileSync('.env.deploy', 'GAFETE_SECRET=' + require('crypto').randomBytes(32).toString('base64url') + '\n')"
+npx wrangler deploy --secrets-file .env.deploy; rm .env.deploy
+
+# Deploys siguientes (el secreto ya está guardado en Cloudflare):
 pnpm deploy
-node -e "process.stdout.write(require('crypto').randomBytes(32).toString('base64url'))" | npx wrangler secret put GAFETE_SECRET
 ```
 
 ## Licencia
