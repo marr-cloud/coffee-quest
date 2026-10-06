@@ -1,6 +1,7 @@
 import { avanzar, guardarGafete, nuevoEstado } from "../gafete";
 import { H } from "../historia.es";
 import { origen, texto } from "../http";
+import { NOMBRE_PROHIBIDO } from "../limpiar";
 import type { Nivel } from "../rutas";
 
 export const recepcion: Nivel = {
@@ -15,7 +16,7 @@ export const recepcion: Nivel = {
 		const nombre = (c.req.query("nombre") ?? "").trim();
 		const piso = c.req.query("piso");
 		if (!nombre) return texto(c, H.sinNombre, 400);
-		if ([...nombre].length > 30 || /\p{C}/u.test(nombre)) return texto(c, H.nombreInvalido, 400);
+		if ([...nombre].length > 30 || NOMBRE_PROHIBIDO.test(nombre)) return texto(c, H.nombreInvalido, 400);
 		if (piso !== "3") return texto(c, H.pisoEquivocado(piso), 400);
 		// Con un gafete válido no se reinicia nada: el progreso y el nombre originales se conservan.
 		const previo = c.var.estado;

@@ -30,6 +30,15 @@ describe("/coleccion", () => {
 		expect(col.variable).toContainEqual({ key: "base", value: BASE });
 	});
 
+	it("esqueleto: cada request describe su propia escena (spec §6)", async () => {
+		const col = await bajar("/coleccion");
+		const descripciones = col.item.map((p) => (p.request as unknown as { description: string }).description);
+		expect(new Set(descripciones).size).toBe(12);
+		expect(descripciones[0]).toContain("Planta baja");
+		expect(descripciones[11]).toContain("HTCPCP");
+		for (const d of descripciones) expect(d).toContain("Completa el método");
+	});
+
 	it("resuelta: cuatro carpetas en orden y el camino completo", async () => {
 		const col = await bajar("/coleccion?spoilers=si");
 		expect(col.info.name).toContain("resuelta");

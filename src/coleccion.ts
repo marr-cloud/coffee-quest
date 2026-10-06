@@ -43,7 +43,12 @@ export function coleccion(base: string, spoilers: boolean): Record<string, unkno
 			info: { name: "Coffee Quest", description: H.coleccionEsqueleto, schema: SCHEMA },
 			item: NIVELES.map((n) => ({
 				name: `${n.numero}. ${n.nombre}`,
-				request: { method: "GET", header: [], url: `{{base}}${n.esqueleto}`, description: H.coleccionNivel },
+				request: {
+					method: "GET",
+					header: [],
+					url: `{{base}}${n.esqueleto}`,
+					description: `${H.escenasColeccion[n.numero] ?? n.nombre}\n\n${H.coleccionNivel}`,
+				},
 			})),
 			variable,
 		};

@@ -1,6 +1,6 @@
 import { avanzar, guardarGafete, jugador } from "../gafete";
 import { H } from "../historia.es";
-import { texto, tipoContenido } from "../http";
+import { cuerpoTexto, texto, tipoContenido } from "../http";
 import { fragmento } from "../receta";
 import type { Nivel } from "../rutas";
 
@@ -25,7 +25,7 @@ export const pedido: Nivel = {
 	],
 	handler: async (c) => {
 		if (tipoContenido(c) !== "application/x-www-form-urlencoded") return texto(c, H.pedidoNoFormulario, 415);
-		const campos = new URLSearchParams(await c.req.text());
+		const campos = new URLSearchParams(await cuerpoTexto(c));
 		const valor = campos.get("pedido");
 		if (valor === null) return texto(c, H.sinPedido, 400);
 		if (valor.trim() !== PEDIDO) return texto(c, H.pedidoMalCodificado([...campos.entries()]), 400);

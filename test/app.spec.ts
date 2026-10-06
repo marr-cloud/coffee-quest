@@ -15,6 +15,16 @@ describe("app", () => {
 		expect(cuerpo).toContain("==> Siguiente:");
 	});
 
+	it.each([
+		["texto del juego", "/", {}],
+		["portada HTML", "/", { Accept: "text/html" }],
+		["colección", "/coleccion", {}],
+		["404", "/sotano", {}],
+	])("%s lleva X-Content-Type-Options: nosniff", async (_, ruta, headers) => {
+		const res = await new Jugador().pedir(ruta, { headers });
+		expect(res.headers.get("x-content-type-options")).toBe("nosniff");
+	});
+
 	it("HEAD / responde sin cuerpo", async () => {
 		const res = await new Jugador().pedir("/", { method: "HEAD" });
 		expect(res.status).toBe(200);

@@ -6,9 +6,13 @@ export const BASE = "https://cafe.test";
 
 export const CLAVE_TI = `Basic ${btoa("becario:cafeina123")}`;
 
-/** Bindings de test. El rate limiter real se reemplaza: los tests sin gafete comparten la misma clave de IP. */
-export function entorno(limite = true): CloudflareBindings {
-	return { ...env, RATE_LIMITER: { limit: async () => ({ success: limite }) } };
+/** Bindings de test. Los rate limiters reales se reemplazan: los tests sin gafete comparten la misma clave de IP. */
+export function entorno(limite = true, limiteIp = true): CloudflareBindings {
+	return {
+		...env,
+		RATE_LIMITER: { limit: async () => ({ success: limite }) },
+		RATE_LIMITER_IP: { limit: async () => ({ success: limiteIp }) },
+	};
 }
 
 /** Un jugador con su propio cookie jar, como curl -b/-c. También guarda fragmentos de receta y el token de TI. */

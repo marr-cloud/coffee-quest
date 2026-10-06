@@ -8,6 +8,8 @@ import type { AppEnv, Estado, Lectura } from "./tipos";
 
 export const COOKIE = "gafete";
 export const VIGENCIA_S = 30 * 24 * 60 * 60;
+/** Separación de dominios explícita frente a los otros HMAC del juego ("ti:", "receta:"). */
+const DOMINIO = "gafete:";
 const NOTA = "si lees esto, ya sabes base64. la receta no esta aqui";
 const enc = new TextEncoder();
 const dec = new TextDecoder();
@@ -24,7 +26,7 @@ export function avanzar(estado: Estado, n: number): Estado {
 
 export async function firmar(estado: Estado, secreto: string): Promise<string> {
 	const payload = aBase64url(enc.encode(JSON.stringify({ ...estado, nota: NOTA })));
-	return `${payload}.${aBase64url(await hmac(secreto, payload))}`;
+	return `${payload}.${aBase64url(await hmac(secreto, `${DOMINIO}${payload}`))}`;
 }
 
 function esEstado(d: unknown): d is Estado {
@@ -45,7 +47,7 @@ export async function verificar(token: string | undefined, secreto: string, ahor
 	const [payload, firma, ...resto] = token.split(".");
 	if (!payload || !firma || resto.length > 0) return { tipo: "falso" };
 	try {
-		if (!igualesSeguro(deBase64url(firma), await hmac(secreto, payload))) return { tipo: "falso" };
+		if (!igualesSeguro(deBase64url(firma), await hmac(secreto, `${DOMINIO}${payload}`))) return { tipo: "falso" };
 		const d: unknown = JSON.parse(dec.decode(deBase64url(payload)));
 		if (!esEstado(d) || ahora / 1000 - d.iat > VIGENCIA_S) return { tipo: "falso" };
 		return { tipo: "ok", estado: { v: 1, id: d.id, nombre: d.nombre, nivel: d.nivel, incidente: d.incidente, iat: d.iat } };
@@ -55,11 +57,13 @@ export async function verificar(token: string | undefined, secreto: string, ahor
 }
 
 export async function guardarGafete(c: Context<AppEnv>, estado: Estado): Promise<void> {
+	// La cookie vive lo que le queda al gafete: reemitirlo no le regala 30 días nuevos.
+	const restante = Math.max(1, estado.iat + VIGENCIA_S - Math.floor(Date.now() / 1000));
 	setCookie(c, COOKIE, await firmar(estado, c.env.GAFETE_SECRET), {
 		path: "/",
 		httpOnly: true,
 		sameSite: "Lax",
-		maxAge: VIGENCIA_S,
+		maxAge: restante,
 		secure: new URL(c.req.url).protocol === "https:",
 	});
 	c.set("estado", estado);

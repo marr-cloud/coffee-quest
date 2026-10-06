@@ -1,3 +1,4 @@
+import { paraComando, sinControl } from "./limpiar";
 import type { Final } from "./tipos";
 
 /** Formato común de una escena: hora, lugar, cuerpo y siguiente paso. */
@@ -43,7 +44,7 @@ hasta la cafetera. Tu única herramienta es curl.
 			? "«¿A qué piso vas?» Agrega &piso=3 a la URL."
 			: piso === "2"
 				? "«¿Al 2? Eso es contabilidad: ahí no hay café, solo Excel.» Tu equipo está en el 3."
-				: `«¿Al piso ${piso.slice(0, 10)}? No, no. Tu equipo está en el 3.»`,
+				: `«¿Al piso ${sinControl(piso).slice(0, 10)}? No, no. Tu equipo está en el 3.»`,
 	nivel2: (nombre: string, o: string) =>
 		escena(
 			"09:00",
@@ -55,7 +56,7 @@ curl no guarda cookies si no se lo pides:
   -c cookies.txt   guarda las cookies que te manden
   -b cookies.txt   las envía en la siguiente petición`,
 			`pide el gafete de nuevo guardándolo, y pasa al ascensor:
-    curl -c cookies.txt "${o}/recepcion?nombre=${encodeURIComponent(nombre)}&piso=3"
+    curl -c cookies.txt "${o}/recepcion?nombre=${encodeURIComponent(paraComando(nombre))}&piso=3"
     curl -b cookies.txt -c cookies.txt ${o}/ascensor`,
 		),
 	nivel3: (o: string) =>
@@ -84,7 +85,7 @@ sigue flechas a menos que se lo pidas con -L.`,
     curl -i -L -b cookies.txt -c cookies.txt ${o}/piso/3`,
 		),
 	otroPiso: (n: string) =>
-		`${n === "2" ? "Contabilidad. Ahí no hay café, solo Excel." : n === "1" ? "En el piso 1 solo hay una planta de plástico." : `El piso ${n.slice(0, 10)} no existe o no tiene café.`} Tu equipo está en el 3.`,
+		`${n === "2" ? "Contabilidad. Ahí no hay café, solo Excel." : n === "1" ? "En el piso 1 solo hay una planta de plástico." : `El piso ${sinControl(n).slice(0, 10)} no existe o no tiene café.`} Tu equipo está en el 3.`,
 	cocina: (o: string) =>
 		escena(
 			"09:04",
@@ -121,7 +122,7 @@ En ese momento suenan todos los teléfonos del piso a la vez:
 
 Tú solo querías un café.`,
 			`arma el formulario con tu firma y súbelo con -F (multipart):
-    echo "firma: ${nombre}" > formulario.txt
+    echo "firma: ${paraComando(nombre)}" > formulario.txt
     curl -b cookies.txt -c cookies.txt -F "formulario=@formulario.txt" ${o}/rrhh/formulario
     (o atiende el incidente primero. Tú decides.)`,
 		),
@@ -251,12 +252,12 @@ mientras todo arde.`,
 	pista: (n: number, d: { o: string; nombre: string; token: string }) => {
 		const cj = "curl -b cookies.txt -c cookies.txt";
 		const pistas: Record<number, string> = {
-			2: `Ve a recepción y guarda el gafete:\n  curl -c cookies.txt "${d.o}/recepcion?nombre=${encodeURIComponent(d.nombre)}&piso=3"`,
+			2: `Ve a recepción y guarda el gafete:\n  curl -c cookies.txt "${d.o}/recepcion?nombre=${encodeURIComponent(paraComando(d.nombre))}&piso=3"`,
 			3: `Pasa al ascensor con el gafete:\n  ${cj} ${d.o}/ascensor`,
 			4: `Entra al piso 3 y sigue la flecha:\n  ${cj} -L ${d.o}/piso/3`,
 			5: `Lee lo que está pegado detrás de la cafetera (solo headers):\n  ${cj} -I ${d.o}/piso/3/cocina`,
 			6: `Manda la solicitud a RRHH en JSON:\n  ${cj} -H "Content-Type: application/json" -d '{"motivo": "necesito cafe", "urgencia": 10}' ${d.o}/rrhh/solicitud`,
-			7: `Sube el formulario firmado:\n  echo "firma: ${d.nombre}" > formulario.txt\n  ${cj} -F "formulario=@formulario.txt" ${d.o}/rrhh/formulario`,
+			7: `Sube el formulario firmado:\n  echo "firma: ${paraComando(d.nombre)}" > formulario.txt\n  ${cj} -F "formulario=@formulario.txt" ${d.o}/rrhh/formulario`,
 			8: `Entra a TI con Basic auth (usuario y clave están en los post-its de la cocina):\n  ${cj} -u ${TI.usuario}:${TI.clave} ${d.o}/ti/maquina`,
 			9: `Pon la máquina en modo barista:\n  ${cj} -X PUT -H "Authorization: Bearer ${d.token}" -H "Content-Type: application/json" -d '{"modo": "barista"}' ${d.o}/ti/maquina/config`,
 			10: `Quita el bloqueo:\n  ${cj} -X DELETE -H "Authorization: Bearer ${d.token}" ${d.o}/ti/maquina/bloqueo`,
@@ -269,6 +270,21 @@ mientras todo arde.`,
 	coleccionEsqueleto:
 		"Coffee Quest en modo GUI. Una petición por nivel, todas como GET y sin headers ni body: complétalas tú. Las cookies las maneja tu cliente. Si te trabas: GET {{base}}/pista",
 	coleccionNivel: "Completa el método, los headers y el body que hagan falta.",
+	/** Escena de cada nivel en la colección esqueleto: la historia sin el comando. */
+	escenasColeccion: {
+		1: "Planta baja, 08:59. Primer día, daily a las 9:15 y cero cafeína. Empieza por la entrada.",
+		2: "Recepción. Preséntate con tu nombre y di a qué piso vas. Te van a dar un gafete: guárdalo.",
+		3: "Ascensor. El torniquete solo gira si llevas el gafete encima.",
+		4: "Piso 3. Un cartel dice que la cocina se mudó. Fíjate en lo que trae la flecha antes de seguirla.",
+		5: "Cocina. La cafetera está rota y tiene algo pegado atrás. No está en el cuerpo de la respuesta.",
+		6: "RRHH. Quieren tu solicitud por escrito, en el formato que RRHH entiende.",
+		7: "RRHH otra vez. Ahora el formulario C-27, firmado y subido como archivo.",
+		8: "TI. La máquina buena está aquí, pero piden usuario y clave. ¿Viste algún post-it?",
+		9: "TI. La máquina está en modo ahorro. Con el token de TI, ponla en modo barista.",
+		10: "TI. Queda el candado. Con el mismo token, quítalo.",
+		11: "La pantalla espera tu pedido: leche=si & azucar=no. El teclado no entiende & ni = sin codificar.",
+		12: "La cafetera habla HTCPCP (RFC 2324). Su método no pasa por el edificio: hay que disfrazarlo.",
+	} as Record<number, string>,
 	coleccionResuelta:
 		"SPOILERS: el juego entero resuelto. Corre las carpetas en orden: Camino, Final 418, Final 218 y Final 200. El 200 atiende el incidente, así que después de él ya no se puede el 218 con ese gafete. En Postman los scripts guardan solos los fragmentos y el token; en otros clientes quizá tengas que copiarlos a mano.",
 	carpetaFinal218: "Necesita el incidente abierto: córrela antes de Final 200.",

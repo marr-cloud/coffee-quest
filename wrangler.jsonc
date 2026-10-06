@@ -11,6 +11,12 @@
 	"main": "src/index.ts",
 	"compatibility_date": "2026-08-31",
 	"compatibility_flags": ["nodejs_compat"],
+	/**
+	 * Custom domain: Cloudflare crea el registro DNS y el certificado. workers.dev sigue activo a propósito.
+	 * https://developers.cloudflare.com/workers/configuration/routing/custom-domains/
+	 */
+	"routes": [{ "pattern": "cafe.maurrod.dev", "custom_domain": true }],
+	"workers_dev": true,
 	"upload_source_maps": true,
 	/**
 	 * Observability
@@ -27,24 +33,20 @@
 		},
 	},
 	/**
-	 * Environment Variables
-	 * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
-	 * Note: never put sensitive data here. Use secrets instead:
-	 * https://developers.cloudflare.com/workers/configuration/secrets/
-	 */
-	"vars": {
-		"ENVIRONMENT": "development",
-	},
-	/**
 	 * Secretos requeridos. GAFETE_SECRET firma el gafete (HMAC).
 	 * Local: .dev.vars · Producción: npx wrangler secret put GAFETE_SECRET
 	 */
 	"secrets": { "required": ["GAFETE_SECRET"] },
 	/**
 	 * Rate limiting: freno anti-abuso, aproximado y por ubicación.
+	 * RATE_LIMITER: por gafete (o por IP si no hay). RATE_LIMITER_IP: tope por IP aunque se junten gafetes;
+	 * holgado para una clase detrás de un NAT.
 	 * https://developers.cloudflare.com/workers/runtime-apis/bindings/rate-limit/
 	 */
-	"ratelimits": [{ "name": "RATE_LIMITER", "namespace_id": "2180", "simple": { "limit": 60, "period": 60 } }],
+	"ratelimits": [
+		{ "name": "RATE_LIMITER", "namespace_id": "2180", "simple": { "limit": 60, "period": 60 } },
+		{ "name": "RATE_LIMITER_IP", "namespace_id": "2181", "simple": { "limit": 300, "period": 60 } },
+	],
 	/**
 	 * Smart Placement
 	 * https://developers.cloudflare.com/workers/configuration/smart-placement/
