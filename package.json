@@ -1,5 +1,5 @@
 {
-	"name": "cloudflare-workers-template",
+	"name": "coffee-quest",
 	"version": "0.0.0",
 	"private": true,
 	"type": "module",
@@ -29,5 +29,8 @@
 		"typescript": "^7.0.2",
 		"vitest": "~4.1.11",
 		"wrangler": "^4.147.0"
+	},
+	"dependencies": {
+		"hono": "4.13.13"
 	}
 }

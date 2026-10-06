@@ -2,6 +2,8 @@
 # `.dev.vars` is gitignored; this example file is not.
 #
 # In production, set the same keys as secrets instead:
-#   npx wrangler secret put MY_API_KEY
+#   npx wrangler secret put GAFETE_SECRET
 #
-# MY_API_KEY="local-development-value"
+# GAFETE_SECRET firma los gafetes. Genera uno con:
+#   node -e "require('fs').writeFileSync('.dev.vars', 'GAFETE_SECRET=' + require('crypto').randomBytes(32).toString('base64url') + '\n')"
+# GAFETE_SECRET=""

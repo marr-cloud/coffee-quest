@@ -8,11 +8,11 @@ Juego público, en español, que se juega con `curl` contra una API en Cloudflar
 de la oficina: son las 8:59, la daily es a las 9:15 y necesita un café. Cada nivel enseña una habilidad de curl, de lo
 básico a lo que se usa en APIs reales. Hay tres finales, que son códigos HTTP:
 
-| Final     | Código              | Condición (resumen)                                             |
-| --------- | ------------------- | --------------------------------------------------------------- |
-| Normal    | `418 I'm a teapot`  | Terminar el camino principal                                    |
-| Verdadero | `200 OK`            | Atender el incidente y entregar la receta completa (5 partes)   |
-| Secreto   | `218 This is fine`  | Ignorar el incidente y pedir el café con `X-Mood: this is fine` |
+| Final     | Código             | Condición (resumen)                                             |
+| --------- | ------------------ | --------------------------------------------------------------- |
+| Normal    | `418 I'm a teapot` | Terminar el camino principal                                    |
+| Verdadero | `200 OK`           | Atender el incidente y entregar la receta completa (5 partes)   |
+| Secreto   | `218 This is fine` | Ignorar el incidente y pedir el café con `X-Mood: this is fine` |
 
 Tono: humor de oficina, ligero, sin exagerar.
 
@@ -27,21 +27,21 @@ clientes web en navegador.
 Convención para el jugador desde el nivel 3: `curl -b cookies.txt -c cookies.txt ...` (el gafete es una cookie).
 En PowerShell se usa `curl.exe` (el nivel 1 lo avisa).
 
-| #   | Escena                    | Petición esperada                                                                                                     | Lección                            | Fragmento     |
-| --- | ------------------------- | --------------------------------------------------------------------------------------------------------------------- | ---------------------------------- | ------------- |
-| 1   | Llegas a la oficina       | `GET /`                                                                                                               | GET básico                         |               |
-| 2   | Recepción                 | `GET /recepcion?nombre=Ana&piso=3` → entrega el gafete (`Set-Cookie`)                                                 | Query params, comillas, `&`        |               |
-| 3   | Torniquete del ascensor   | `GET /ascensor` con la cookie                                                                                         | `-c` / `-b`                        |               |
-| 4   | Piso 3                    | `GET /piso/3` → `301 Location: /piso/3/cocina`                                                                        | `-L`                               | 1 (en el 301) |
-| 5   | Cafetera rota con post-it | `HEAD /piso/3/cocina` → headers `X-Post-It-*` (siguiente paso + credenciales de TI)                                   | `-I`                               |               |
-| 6   | RRHH: solicitud           | `POST /rrhh/solicitud` JSON `{"motivo": "...", "urgencia": 1-10}` → **abre el incidente**                             | POST JSON, `Content-Type`          |               |
-| 7   | RRHH: formulario firmado  | `POST /rrhh/formulario` multipart, campo `formulario` = archivo con línea `firma: <nombre>`                           | `-F` y `@archivo`                  | 2             |
-| 8   | TI: la máquina buena      | `GET /ti/maquina` → 401 `WWW-Authenticate: Basic`; con `-u becario:<clave>` devuelve un token                         | Basic auth                         |               |
-| 9   | TI: configurar            | `PUT /ti/maquina/config` JSON `{"modo": "barista"}` + `Authorization: Bearer <token>`                                 | PUT, Bearer                        |               |
-| 10  | TI: desbloquear           | `DELETE /ti/maquina/bloqueo` + Bearer                                                                                 | DELETE                             | 3             |
-| 11  | Pedido                    | `POST /cafetera/pedido` con `--data-urlencode "pedido=leche=si & azucar=no"`                                          | URL-encoding                       | 4             |
+| #   | Escena                    | Petición esperada                                                                                                        | Lección                            | Fragmento     |
+| --- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ---------------------------------- | ------------- |
+| 1   | Llegas a la oficina       | `GET /`                                                                                                                  | GET básico                         |               |
+| 2   | Recepción                 | `GET /recepcion?nombre=Ana&piso=3` → entrega el gafete (`Set-Cookie`)                                                    | Query params, comillas, `&`        |               |
+| 3   | Torniquete del ascensor   | `GET /ascensor` con la cookie                                                                                            | `-c` / `-b`                        |               |
+| 4   | Piso 3                    | `GET /piso/3` → `301 Location: /piso/3/cocina`                                                                           | `-L`                               | 1 (en el 301) |
+| 5   | Cafetera rota con post-it | `HEAD /piso/3/cocina` → headers `X-Post-It-*` (siguiente paso + credenciales de TI)                                      | `-I`                               |               |
+| 6   | RRHH: solicitud           | `POST /rrhh/solicitud` JSON `{"motivo": "...", "urgencia": 1-10}` → **abre el incidente**                                | POST JSON, `Content-Type`          |               |
+| 7   | RRHH: formulario firmado  | `POST /rrhh/formulario` multipart, campo `formulario` = archivo con línea `firma: <nombre>`                              | `-F` y `@archivo`                  | 2             |
+| 8   | TI: la máquina buena      | `GET /ti/maquina` → 401 `WWW-Authenticate: Basic`; con `-u becario:<clave>` devuelve un token                            | Basic auth                         |               |
+| 9   | TI: configurar            | `PUT /ti/maquina/config` JSON `{"modo": "barista"}` + `Authorization: Bearer <token>`                                    | PUT, Bearer                        |               |
+| 10  | TI: desbloquear           | `DELETE /ti/maquina/bloqueo` + Bearer                                                                                    | DELETE                             | 3             |
+| 11  | Pedido                    | `POST /cafetera/pedido` con `--data-urlencode "pedido=leche=si & azucar=no"`                                             | URL-encoding                       | 4             |
 | 12  | El momento                | `POST /cafetera` + `X-HTTP-Method-Override: BREW` + `Content-Type: message/coffeepot` + `Accept-Additions`, body `start` | Method override, HTCPCP (RFC 2324) |               |
-| —   | Incidente (opcional)      | `POST /incidente/ack` (disponible desde que se abre en el nivel 6)                                                    | Decidir con costo                  | 5             |
+| —   | Incidente (opcional)      | `POST /incidente/ack` (disponible desde que se abre en el nivel 6)                                                       | Decidir con costo                  | 5             |
 
 Notas por nivel:
 
@@ -209,3 +209,15 @@ Vitest dentro de workerd (`@cloudflare/vitest-plugin`, como la plantilla), con T
 - `Accept-Additions`, `X-Mood` y `X-HTTP-Method-Override` llegan intactos al Worker.
 - Cookies `Secure` y el flujo `-b/-c` funcionan con `-L` a través del redirect del nivel 4.
 - `curl.exe` en PowerShell con las comillas que sugieren los textos de los niveles 2 y 11.
+
+### Resultados (2026-10-06, coffee-quest.meitrix8208.workers.dev)
+
+- `-X BREW`: **501** de Cloudflare antes de llegar al Worker (también en `wrangler dev`). El override funciona.
+- Línea de estado con `--http1.1`: `418 I'm a teapot` y `200 OK` se ven bien; el **218 sale como `HTTP/1.1 218 <none>`**. El edge
+  arma la línea con su propia tabla y descarta el `statusText` del Worker para códigos no oficiales (en local sí se ve
+  `218 This is fine`). El cuerpo lo dice igual, así que el final no cambia.
+- `X-HTTP-Method-Override`, `Accept-Additions`, `X-Mood` y `X-Receta` llegan intactos: los tres finales pasaron con
+  `scripts/partida.sh` (39 pasos ok).
+- Cookies `Secure` con `-L -b -c` a través del 301: sí. El 301 trae `Set-Cookie` y el `HEAD` siguiente avanza con esa cookie.
+- `curl.exe` en PowerShell 7: el nivel 2 con comillas llega entero (`&` incluido) y `--data-urlencode` del nivel 11 también.
+- Primer deploy: wrangler exige el secreto requerido antes de crear el Worker, así que se usa `--secrets-file` (ver README).
