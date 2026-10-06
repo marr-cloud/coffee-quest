@@ -69,6 +69,7 @@ scripts/partida.sh      juega los tres finales con curl real contra una URL
 ### Task 1: Configuración base y cripto
 
 **Files:**
+
 - Modify: `package.json` (name, dependencia hono)
 - Modify: `wrangler.jsonc` (name, `secrets.required`, `ratelimits`)
 - Modify: `.dev.vars.example`
@@ -78,6 +79,7 @@ scripts/partida.sh      juega los tres finales con curl real contra una URL
 - Test: `test/cripto.spec.ts`
 
 **Interfaces:**
+
 - Produces: `aBase64url(bytes: Uint8Array): string`, `deBase64url(texto: string): Uint8Array` (lanza si es inválido),
   `hmac(secreto: string, mensaje: string): Promise<Uint8Array>` (32 bytes), `igualesSeguro(a: Uint8Array, b: Uint8Array): boolean`.
 - Produces: `env.GAFETE_SECRET: string` y `env.RATE_LIMITER: RateLimit` en `CloudflareBindings`.
@@ -245,18 +247,30 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 ### Task 2: Gafete, helpers HTTP y textos comunes
 
 **Files:**
+
 - Create: `src/tipos.ts`, `src/http.ts`, `src/gafete.ts`, `src/historia.es.ts`
 - Test: `test/gafete.spec.ts`, `test/http.spec.ts`
 
 **Interfaces:**
+
 - Consumes: `aBase64url`, `deBase64url`, `hmac`, `igualesSeguro` (Tarea 1).
 - Produces (`src/tipos.ts`):
   ```ts
   export type Incidente = null | "abierto" | "atendido";
   export type Final = 200 | 218 | 418;
-  export interface Estado { v: 1; id: string; nombre: string; nivel: number; incidente: Incidente; iat: number }
+  export interface Estado {
+  	v: 1;
+  	id: string;
+  	nombre: string;
+  	nivel: number;
+  	incidente: Incidente;
+  	iat: number;
+  }
   export type Lectura = { tipo: "ninguno" } | { tipo: "falso" } | { tipo: "ok"; estado: Estado };
-  export interface AppEnv { Bindings: CloudflareBindings; Variables: { lectura: Lectura; estado: Estado | null; final: Final | null } }
+  export interface AppEnv {
+  	Bindings: CloudflareBindings;
+  	Variables: { lectura: Lectura; estado: Estado | null; final: Final | null };
+  }
   ```
 - Produces (`src/http.ts`): `TEXTO`, `texto(c, cuerpo, status?, headers?, statusText?): Response`, `tipoContenido(c): string`,
   `origen(c): string`, `credencialesBasic(c): { usuario: string; clave: string } | null`, `tokenBearer(c): string | null`.
@@ -666,10 +680,12 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 ### Task 3: Receta y finales (lógica pura)
 
 **Files:**
+
 - Create: `src/receta.ts`, `src/finales.ts`
 - Test: `test/receta.spec.ts`, `test/finales.spec.ts`
 
 **Interfaces:**
+
 - Consumes: `hmac` (Tarea 1), tipos `Final`, `Incidente` (Tarea 2).
 - Produces: `PALABRAS: readonly string[]` (32), `fragmento(secreto, id, n): Promise<string>`, `recetaCompleta(secreto, id): Promise<string[]>`,
   `recetaCorrecta(secreto, id, header: string | undefined): Promise<boolean>`,
@@ -752,10 +768,38 @@ import { hmac } from "./cripto";
 
 /** 32 palabras: un byte del HMAC módulo 32 elige una sin sesgo. */
 export const PALABRAS = [
-	"molienda-fina", "agua-92", "grano-tostado", "crema-suave", "taza-tibia", "filtro-nuevo", "espuma-densa", "aroma-intenso",
-	"cuchara-larga", "azucar-morena", "canela-molida", "vapor-alto", "leche-entera", "cacao-amargo", "hielo-picado", "vaso-doble",
-	"prensa-francesa", "goteo-lento", "tueste-medio", "origen-unico", "notas-citricas", "cuerpo-medio", "acidez-baja", "pausa-larga",
-	"sorbo-corto", "receta-vieja", "jarra-limpia", "molino-manual", "agua-filtrada", "leche-avena", "miel-pura", "vainilla-real",
+	"molienda-fina",
+	"agua-92",
+	"grano-tostado",
+	"crema-suave",
+	"taza-tibia",
+	"filtro-nuevo",
+	"espuma-densa",
+	"aroma-intenso",
+	"cuchara-larga",
+	"azucar-morena",
+	"canela-molida",
+	"vapor-alto",
+	"leche-entera",
+	"cacao-amargo",
+	"hielo-picado",
+	"vaso-doble",
+	"prensa-francesa",
+	"goteo-lento",
+	"tueste-medio",
+	"origen-unico",
+	"notas-citricas",
+	"cuerpo-medio",
+	"acidez-baja",
+	"pausa-larga",
+	"sorbo-corto",
+	"receta-vieja",
+	"jarra-limpia",
+	"molino-manual",
+	"agua-filtrada",
+	"leche-avena",
+	"miel-pura",
+	"vainilla-real",
 ] as const;
 
 /** Fragmento n (1..5) de la receta de un jugador. Se recalcula siempre: el gafete no lo guarda. */
@@ -813,20 +857,43 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 ### Task 4: Esqueleto de la app, rate limit y nivel 1
 
 **Files:**
+
 - Create: `src/rutas.ts`, `src/limite.ts`, `src/niveles/01-entrada.ts`, `src/niveles/index.ts`, `test/ayuda.ts`, `test/app.spec.ts`
 - Modify: `src/index.ts` (reemplazo completo), `src/historia.es.ts` (textos del nivel 1 y genéricos)
 - Delete: `test/index.spec.ts` (test de la plantilla)
 
 **Interfaces:**
+
 - Consumes: `leerGafete`, `requiereNivel`, `texto`, `origen`, `H` (Tarea 2).
 - Produces (`src/rutas.ts`):
   ```ts
   export type Metodo = "GET" | "POST" | "PUT" | "DELETE";
-  export type Cuerpo = { modo: "raw"; raw: string } | { modo: "urlencoded"; campos: Record<string, string> } | { modo: "formdata"; campos: Record<string, string> };
-  export interface PeticionResuelta { nombre: string; metodo: string; url: string; headers?: Record<string, string>; cuerpo?: Cuerpo; captura?: string[]; sinRedirect?: boolean }
-  export interface Ruta { metodo: Metodo | "ALL"; ruta: string; requiere: number; handler: (c: Context<AppEnv>) => Response | Promise<Response> }
-  export interface Nivel extends Ruta { numero: number; nombre: string; esqueleto: string; resuelta: PeticionResuelta[] }
-  export function montar(app: Hono<AppEnv>, r: Ruta): void
+  export type Cuerpo =
+  	| { modo: "raw"; raw: string }
+  	| { modo: "urlencoded"; campos: Record<string, string> }
+  	| { modo: "formdata"; campos: Record<string, string> };
+  export interface PeticionResuelta {
+  	nombre: string;
+  	metodo: string;
+  	url: string;
+  	headers?: Record<string, string>;
+  	cuerpo?: Cuerpo;
+  	captura?: string[];
+  	sinRedirect?: boolean;
+  }
+  export interface Ruta {
+  	metodo: Metodo | "ALL";
+  	ruta: string;
+  	requiere: number;
+  	handler: (c: Context<AppEnv>) => Response | Promise<Response>;
+  }
+  export interface Nivel extends Ruta {
+  	numero: number;
+  	nombre: string;
+  	esqueleto: string;
+  	resuelta: PeticionResuelta[];
+  }
+  export function montar(app: Hono<AppEnv>, r: Ruta): void;
   ```
 - Produces: `NIVELES: Nivel[]` (`src/niveles/index.ts`), `limitar` (middleware), `default export app` (`src/index.ts`).
 - Produces (`test/ayuda.ts`): `BASE`, `entorno(limite?)`, `class Jugador { gafete; receta; tokenTi; pedir(ruta, init?); estado }`,
@@ -1153,10 +1220,12 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 ### Task 5: Niveles 2 y 3 (recepción y ascensor)
 
 **Files:**
+
 - Create: `src/niveles/02-recepcion.ts`, `src/niveles/03-ascensor.ts`, `test/recepcion.spec.ts`
 - Modify: `src/niveles/index.ts`, `src/historia.es.ts`, `test/ayuda.ts`
 
 **Interfaces:**
+
 - Consumes: `nuevoEstado`, `avanzar`, `guardarGafete`, `jugador` (Tarea 2); `Nivel` (Tarea 4).
 - Produces: `recepcion: Nivel` (GET `/recepcion`, requiere 0), `ascensor: Nivel` (GET `/ascensor`, requiere 2). `PASOS[2]`, `PASOS[3]`.
 
@@ -1371,10 +1440,12 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 ### Task 6: Niveles 4 y 5 (redirect y HEAD)
 
 **Files:**
+
 - Create: `src/niveles/04-piso.ts`, `src/niveles/05-cocina.ts`, `test/piso.spec.ts`
 - Modify: `src/niveles/index.ts`, `src/historia.es.ts`, `test/ayuda.ts`
 
 **Interfaces:**
+
 - Consumes: `fragmento` (Tarea 3); `avanzar`, `guardarGafete`, `jugador` (Tarea 2).
 - Produces: `piso: Nivel` (GET `/piso/:n`, requiere 3), `cocina: Nivel` (GET `/piso/3/cocina`, requiere 4; avanza solo con HEAD).
   `TI = { usuario: "becario", clave: "cafeina123" }` exportado desde `src/historia.es.ts` (lo usan las Tareas 9, 12 y 13). `PASOS[4]`, `PASOS[5]`.
@@ -1595,10 +1666,12 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 ### Task 7: Nivel 6 (solicitud JSON) e incidente
 
 **Files:**
+
 - Create: `src/niveles/06-solicitud.ts`, `src/incidente.ts`, `test/solicitud.spec.ts`
 - Modify: `src/niveles/index.ts`, `src/index.ts` (RUTAS + header `X-Perro`), `src/historia.es.ts`, `test/ayuda.ts`
 
 **Interfaces:**
+
 - Consumes: `tipoContenido` (Tarea 2), `fragmento` (Tarea 3), `Ruta` (Tarea 4).
 - Produces: `solicitud: Nivel` (POST `/rrhh/solicitud`, requiere 5; deja `incidente = "abierto"` si era `null`).
   `INCIDENTE: Ruta` (POST `/incidente/ack`, requiere 6; deja `incidente = "atendido"` y entrega `X-Receta-5`).
@@ -1825,8 +1898,8 @@ const RUTAS: Ruta[] = [...NIVELES, INCIDENTE];
 En el middleware de log, justo después de `const estado = c.var.estado;`:
 
 ```ts
-	// Pista para el final secreto: solo la ve quien mira headers mientras producción arde.
-	if (estado?.incidente === "abierto") c.res.headers.set("X-Perro", H.perro);
+// Pista para el final secreto: solo la ve quien mira headers mientras producción arde.
+if (estado?.incidente === "abierto") c.res.headers.set("X-Perro", H.perro);
 ```
 
 - [ ] **Step 8: Correr tests y typecheck**
@@ -1849,10 +1922,12 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 ### Task 8: Nivel 7 (formulario multipart)
 
 **Files:**
+
 - Create: `src/niveles/07-formulario.ts`, `test/formulario.spec.ts`
 - Modify: `src/niveles/index.ts`, `src/historia.es.ts`, `test/ayuda.ts`
 
 **Interfaces:**
+
 - Consumes: `tipoContenido`, `fragmento`, `avanzar`, `guardarGafete`, `jugador`.
 - Produces: `formulario: Nivel` (POST `/rrhh/formulario`, requiere 6; entrega `X-Receta-2`). `PASOS[7]`.
 
@@ -2022,10 +2097,12 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 ### Task 9: Niveles 8, 9 y 10 (TI: Basic, Bearer, PUT y DELETE)
 
 **Files:**
+
 - Create: `src/niveles/08-ti.ts`, `src/niveles/09-config.ts`, `src/niveles/10-bloqueo.ts`, `test/ti.spec.ts`
 - Modify: `src/niveles/index.ts`, `src/historia.es.ts`, `test/ayuda.ts`
 
 **Interfaces:**
+
 - Consumes: `credencialesBasic`, `tipoContenido` (Tarea 2); `tokenTi`, `rechazoBearer` (Tarea 2); `TI` (Tarea 6); `H.jsonRoto` (Tarea 7).
 - Produces: `ti: Nivel` (GET `/ti/maquina`, requiere 7; responde con el token en el cuerpo), `config: Nivel` (PUT `/ti/maquina/config`,
   requiere 8), `bloqueo: Nivel` (DELETE `/ti/maquina/bloqueo`, requiere 9; entrega `X-Receta-3`).
@@ -2329,10 +2406,12 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 ### Task 10: Nivel 11 (pedido con URL-encoding)
 
 **Files:**
+
 - Create: `src/niveles/11-pedido.ts`, `test/pedido.spec.ts`
 - Modify: `src/niveles/index.ts`, `src/historia.es.ts`, `test/ayuda.ts`
 
 **Interfaces:**
+
 - Produces: `PEDIDO = "leche=si & azucar=no"` (exportado desde `src/niveles/11-pedido.ts`), `pedido: Nivel` (POST `/cafetera/pedido`,
   requiere 10; entrega `X-Receta-4`). `PASOS[11]`.
 
@@ -2499,10 +2578,12 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 ### Task 11: Nivel 12 (la cafetera) y los tres finales
 
 **Files:**
+
 - Create: `src/niveles/12-cafetera.ts`, `test/cafetera.spec.ts`
 - Modify: `src/niveles/index.ts`, `src/historia.es.ts`, `test/ayuda.ts`
 
 **Interfaces:**
+
 - Consumes: `decidirFinal`, `ESTADO_HTTP` (Tarea 3); `recetaCorrecta`, `recetaCompleta` (Tarea 3); `texto` con `statusText` (Tarea 2).
 - Produces: `cafetera: Nivel` (ALL `/cafetera`, requiere 11; método efectivo = `X-HTTP-Method-Override` si es POST). Deja `nivel = 12`
   y `c.var.final`. `brew(j, extra?)` exportada desde `test/ayuda.ts`. `CAFETERA_HEADERS` exportado desde `src/niveles/12-cafetera.ts`
@@ -2738,10 +2819,12 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 ### Task 12: `/pista`
 
 **Files:**
+
 - Create: `src/pista.ts`, `test/pista.spec.ts`
 - Modify: `src/index.ts` (RUTAS), `src/historia.es.ts`
 
 **Interfaces:**
+
 - Consumes: `c.var.lectura` (Tarea 2), `tokenTi` (Tarea 2), `TI` (Tarea 6).
 - Produces: `PISTA: Ruta` (GET `/pista`, requiere 0). `H.pista(n, d: { o: string; nombre: string; token: string }): string` para
   n = 2..13 (13 = ya terminaste) y `H.pistaGafeteFalso`.
@@ -2873,10 +2956,12 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 ### Task 13: Colección Postman v2.1 (`/coleccion`)
 
 **Files:**
+
 - Create: `src/coleccion.ts`, `test/coleccion.spec.ts`
 - Modify: `src/index.ts` (RUTAS), `src/historia.es.ts`
 
 **Interfaces:**
+
 - Consumes: `NIVELES` con `esqueleto` y `resuelta` (Tareas 4 a 11), `CAFETERA_HEADERS` (Tarea 11), `PeticionResuelta` y `Cuerpo` (Tarea 4).
 - Produces: `coleccion(origen: string, spoilers: boolean): Record<string, unknown>`, `COLECCION: Ruta` (GET `/coleccion`, requiere 0;
   `?spoilers=si` devuelve la resuelta).
@@ -3079,10 +3164,12 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 ### Task 14: Portada pixel art para navegador
 
 **Files:**
+
 - Create: `src/web/escena.ts`, `src/web/portada.ts`, `test/portada.spec.ts`
 - Modify: `src/niveles/01-entrada.ts` (content negotiation), `src/historia.es.ts` (textos de la portada)
 
 **Interfaces:**
+
 - Produces: `PALETA: Record<string, string>` (16 colores), `ESCENA: readonly string[]` (36 filas de 64), `escenaSvg(alt: string): string`,
   `portada(origen: string): string`. `GET /` con `Accept` que incluye `text/html` devuelve la portada; si no, el nivel 1 en texto.
   Ambas respuestas llevan `Vary: Accept`.
@@ -3137,7 +3224,7 @@ describe("escena pixel art", () => {
 		expect(svg).toContain('viewBox="0 0 64 36"');
 		expect(svg).toContain('shape-rendering="crispEdges"');
 		expect(svg).toContain('role="img"');
-		expect(svg).toContain("<title id=\"escena-titulo\">descripción &lt;de&gt; prueba</title>");
+		expect(svg).toContain('<title id="escena-titulo">descripción &lt;de&gt; prueba</title>');
 		expect(svg).toContain('class="brillo"');
 		expect(svg).toContain('class="humo"');
 	});
@@ -3246,7 +3333,14 @@ export const ESCENA: readonly string[] = [
 
 /** Humo que sale de la cafetera rota (capa animada, sobre la pared). */
 const HUMO: readonly [number, number][] = [
-	[53, 7], [54, 6], [55, 6], [55, 5], [56, 4], [57, 4], [54, 3], [55, 2],
+	[53, 7],
+	[54, 6],
+	[55, 6],
+	[55, 5],
+	[56, 4],
+	[57, 4],
+	[54, 3],
+	[55, 2],
 ];
 
 const esc = (s: string) => s.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
@@ -3255,7 +3349,7 @@ const esc = (s: string) => s.replaceAll("&", "&amp;").replaceAll("<", "&lt;").re
 export function escenaSvg(alt: string): string {
 	const capas = new Map<string, string[]>();
 	ESCENA.forEach((fila, y) => {
-		for (let x = 0; x < fila.length; ) {
+		for (let x = 0; x < fila.length;) {
 			const color = fila[x]!;
 			let fin = x + 1;
 			while (fila[fin] === color) fin++;
@@ -3265,7 +3359,9 @@ export function escenaSvg(alt: string): string {
 			x = fin;
 		}
 	});
-	const grupos = [...capas].map(([color, rects]) => `<g fill="${PALETA[color]}"${color === "o" ? ' class="brillo"' : ""}>${rects.join("")}</g>`);
+	const grupos = [...capas].map(
+		([color, rects]) => `<g fill="${PALETA[color]}"${color === "o" ? ' class="brillo"' : ""}>${rects.join("")}</g>`,
+	);
 	const humo = HUMO.map(([x, y]) => `<rect x="${x}" y="${y}" width="1" height="1"/>`).join("");
 	return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 36" shape-rendering="crispEdges" role="img" aria-labelledby="escena-titulo"><title id="escena-titulo">${esc(alt)}</title>${grupos.join("")}<g class="humo" fill="${PALETA.g}">${humo}</g></svg>`;
 }
@@ -3380,6 +3476,7 @@ pnpm dev
 
 (en segundo plano). Con la skill `playwright-cli`, abre `http://localhost:8787` en 1280×800 y en 390×844, en modo claro y oscuro, y
 saca capturas. Comprueba:
+
 - La escena se ve nítida, sin bordes borrosos.
 - No hay scroll horizontal a 390 px (el comando hace scroll solo dentro de su caja).
 - Los tres trofeos entran en una fila.
@@ -3403,10 +3500,12 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 ### Task 15: `scripts/partida.sh`, README y verificación local
 
 **Files:**
+
 - Create: `scripts/partida.sh`
 - Modify: `README.md` (reemplazo completo)
 
 **Interfaces:**
+
 - Consumes: todas las rutas del juego.
 - Produces: `scripts/partida.sh [URL]`, que juega los tres finales con curl real. Termina con código 0 si todo pasa y con 1 en el primer fallo.
 
@@ -3581,10 +3680,12 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 ### Task 16: Deploy y verificaciones en el edge real
 
 **Files:**
+
 - Modify: `wrangler.jsonc` (custom domain, solo en el Step 6)
 - Modify: `docs/superpowers/specs/2026-10-06-coffee-quest-design.md` (resultados de §9)
 
 **Interfaces:**
+
 - Consumes: el Worker completo y `scripts/partida.sh`.
 - Produces: un deploy público en `workers.dev` y luego en `cafe.maurrod.dev`, con los resultados de §9 registrados en la spec.
 
@@ -3651,6 +3752,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 - [ ] **Step 6: ⚠ Custom domain `cafe.maurrod.dev`**
 
 `maurrod.dev` es una zona en vivo. Antes de tocarla:
+
 1. Confirma con el usuario que no existe un registro DNS `cafe.maurrod.dev`. Wrangler falla si existe, y no hay que borrarlo sin preguntar.
 2. Con su visto bueno, agrega a `wrangler.jsonc`, debajo de `"compatibility_flags"`:
 
@@ -3693,4 +3795,3 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
   3. Recepción repetida → Tarea 5.
   4. `Set-Cookie` en el 301 → Tarea 6.
   5. Content-Type con parámetros → Tareas 7 y 11.
-
