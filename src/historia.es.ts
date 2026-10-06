@@ -247,5 +247,24 @@ Final normal. Dicen que la cafetera de verdad necesita una receta completa
 (5 partes, en un header X-Receta)... y que hay quien se toma el café
 mientras todo arde.`,
 					),
+	pistaGafeteFalso: "Tu gafete no sirve (alterado o vencido). Borra cookies.txt y empieza otra vez en recepción.",
+	pista: (n: number, d: { o: string; nombre: string; token: string }) => {
+		const cj = "curl -b cookies.txt -c cookies.txt";
+		const pistas: Record<number, string> = {
+			2: `Ve a recepción y guarda el gafete:\n  curl -c cookies.txt "${d.o}/recepcion?nombre=${encodeURIComponent(d.nombre)}&piso=3"`,
+			3: `Pasa al ascensor con el gafete:\n  ${cj} ${d.o}/ascensor`,
+			4: `Entra al piso 3 y sigue la flecha:\n  ${cj} -L ${d.o}/piso/3`,
+			5: `Lee lo que está pegado detrás de la cafetera (solo headers):\n  ${cj} -I ${d.o}/piso/3/cocina`,
+			6: `Manda la solicitud a RRHH en JSON:\n  ${cj} -H "Content-Type: application/json" -d '{"motivo": "necesito cafe", "urgencia": 10}' ${d.o}/rrhh/solicitud`,
+			7: `Sube el formulario firmado:\n  echo "firma: ${d.nombre}" > formulario.txt\n  ${cj} -F "formulario=@formulario.txt" ${d.o}/rrhh/formulario`,
+			8: `Entra a TI con Basic auth (usuario y clave están en los post-its de la cocina):\n  ${cj} -u ${TI.usuario}:${TI.clave} ${d.o}/ti/maquina`,
+			9: `Pon la máquina en modo barista:\n  ${cj} -X PUT -H "Authorization: Bearer ${d.token}" -H "Content-Type: application/json" -d '{"modo": "barista"}' ${d.o}/ti/maquina/config`,
+			10: `Quita el bloqueo:\n  ${cj} -X DELETE -H "Authorization: Bearer ${d.token}" ${d.o}/ti/maquina/bloqueo`,
+			11: `Haz el pedido codificado:\n  ${cj} --data-urlencode "pedido=leche=si & azucar=no" ${d.o}/cafetera/pedido`,
+			12: `El método es BREW, pero el edificio bloquea métodos raros. Disfrázalo:\n  ${cj} -H "X-HTTP-Method-Override: BREW" -H "Content-Type: message/coffeepot" -H "Accept-Additions: leche" -d start ${d.o}/cafetera`,
+			13: "Ya llegaste a la cafetera. Hay tres finales: 418, 200 y uno secreto.\n¿Miraste los headers de todo lo que te respondieron? (-i)",
+		};
+		return `Pista:\n${pistas[n] ?? pistas[13]}`;
+	},
 	// (los textos de cada tarea se agregan arriba de esta línea)
 };

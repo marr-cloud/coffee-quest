@@ -5,10 +5,11 @@ import { origen, texto } from "./http";
 import { INCIDENTE } from "./incidente";
 import { limitar } from "./limite";
 import { NIVELES } from "./niveles";
+import { PISTA } from "./pista";
 import { type Ruta, montar } from "./rutas";
 import type { AppEnv } from "./tipos";
 
-const RUTAS: Ruta[] = [...NIVELES, INCIDENTE];
+const RUTAS: Ruta[] = [...NIVELES, INCIDENTE, PISTA];
 
 const app = new Hono<AppEnv>();
 
