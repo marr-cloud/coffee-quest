@@ -9,10 +9,11 @@ import { limitar } from "./limite";
 import { NIVELES } from "./niveles";
 import { PISTA } from "./pista";
 import { type Ruta, montar } from "./rutas";
+import { FAVICON, FAVICON_ICO } from "./web/favicon";
 import { CSP_BASE, HEADERS_SEGURIDAD } from "./seguridad";
 import type { AppEnv } from "./tipos";
 
-const RUTAS: Ruta[] = [...NIVELES, INCIDENTE, PISTA, COLECCION];
+const RUTAS: Ruta[] = [...NIVELES, INCIDENTE, PISTA, COLECCION, FAVICON, FAVICON_ICO];
 const MIN_SECRETO = 32;
 const MAX_CUERPO = 16 * 1024;
 

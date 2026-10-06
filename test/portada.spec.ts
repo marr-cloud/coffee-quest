@@ -41,8 +41,8 @@ describe("portada", () => {
 		expect(html).toContain('href="/coleccion"');
 		expect(html).toContain("<code>Accept: text/html</code>");
 		expect(html).toContain("<svg");
-		// Favicon inline: sin él, el navegador pide /favicon.ico y recibe un 404.
-		expect(html).toContain('<link rel="icon" href="data:image/svg+xml,');
+		// Favicon servido por el Worker: un data: URI lo bloquearía la CSP (img-src 'self').
+		expect(html).toContain('<link rel="icon" href="/favicon.svg"');
 	});
 
 	it("curl (Accept: */*) → nivel 1 en texto", async () => {
