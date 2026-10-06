@@ -40,6 +40,8 @@ export class Jugador {
 /** La petición correcta de cada nivel. */
 export const PASOS: Record<number, (j: Jugador) => Promise<Response>> = {
 	1: (j) => j.pedir("/"),
+	2: (j) => j.pedir("/recepcion?nombre=Ana&piso=3"),
+	3: (j) => j.pedir("/ascensor"),
 	// (cada tarea agrega aquí el paso de su nivel)
 };
 
