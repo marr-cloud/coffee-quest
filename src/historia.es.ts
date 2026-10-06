@@ -147,5 +147,40 @@ Ahora sí: el café.`,
 			`TI tiene la máquina buena. Pide acceso:
     curl -b cookies.txt -c cookies.txt ${o}/ti/maquina`,
 		),
+	tiPideCredenciales:
+		"Sale alguien de TI con audífonos: «¿Usuario y clave?».\n(curl hace Basic auth con  -u usuario:clave . ¿Viste algún post-it por ahí?)",
+	tiClaveMala: "«Esa clave no es.» Revisa los post-its de la cocina (curl -I).",
+	nivel8: (token: string) =>
+		escena(
+			"09:09",
+			"TI",
+			`«Ah, el nuevo. La máquina está bloqueada y en modo ahorro.
+Toma, tu token de acceso:»
+
+  ${token}
+
+«Primero ponla en modo barista: PUT a /ti/maquina/config con JSON.
+Después quítale el bloqueo con DELETE a /ti/maquina/bloqueo.
+El token va en el header Authorization, tipo Bearer. Nunca en la URL.»`,
+			'configura la máquina. El JSON es {"modo": "barista"}.',
+		),
+	modoInvalido: 'Modos disponibles: barista.  {"modo": "barista"}',
+	nivel9: escena(
+		"09:10",
+		"TI",
+		`La máquina hace un ruido de avión despegando. Modo barista activado.
+Pero sigue el candado rojo en la pantalla.`,
+		"quítale el bloqueo (DELETE, con el mismo token).",
+	),
+	nivel10: escena(
+		"09:11",
+		"TI",
+		`Candado fuera. La pantalla dice: «Escriba su pedido».
+Hay una advertencia pegada con cinta: «este teclado no entiende & ni =
+ni espacios sin codificar».`,
+		`haz tu pedido, exacto:  leche=si & azucar=no
+    Va como formulario (-d) en el campo pedido, a /cafetera/pedido.
+    curl tiene una variante de -d que codifica esos caracteres por ti.`,
+	),
 	// (los textos de cada tarea se agregan arriba de esta línea)
 };

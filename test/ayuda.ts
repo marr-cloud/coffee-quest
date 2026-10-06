@@ -4,6 +4,8 @@ import app from "../src/index";
 
 export const BASE = "https://cafe.test";
 
+export const CLAVE_TI = `Basic ${btoa("becario:cafeina123")}`;
+
 /** Bindings de test. El rate limiter real se reemplaza: los tests sin gafete comparten la misma clave de IP. */
 export function entorno(limite = true): CloudflareBindings {
 	return { ...env, RATE_LIMITER: { limit: async () => ({ success: limite }) } };
@@ -55,6 +57,18 @@ export const PASOS: Record<number, (j: Jugador) => Promise<Response>> = {
 		fd.append("formulario", new File(["firma: Ana\n"], "formulario.txt", { type: "text/plain" }));
 		return j.pedir("/rrhh/formulario", { method: "POST", body: fd });
 	},
+	8: async (j) => {
+		const res = await j.pedir("/ti/maquina", { headers: { Authorization: CLAVE_TI } });
+		j.tokenTi = /ti_[A-Za-z0-9_-]+/.exec(await res.clone().text())?.[0] ?? null;
+		return res;
+	},
+	9: (j) =>
+		j.pedir("/ti/maquina/config", {
+			method: "PUT",
+			headers: { Authorization: `Bearer ${j.tokenTi}`, "Content-Type": "application/json" },
+			body: '{"modo": "barista"}',
+		}),
+	10: (j) => j.pedir("/ti/maquina/bloqueo", { method: "DELETE", headers: { Authorization: `Bearer ${j.tokenTi}` } }),
 	// (cada tarea agrega aquí el paso de su nivel)
 };
 
