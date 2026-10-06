@@ -1,6 +1,6 @@
 # Coffee Quest — Diseño
 
-Fecha: 2026-10-06 · Estado: borrador para revisión
+Fecha: 2026-10-06 · Estado: aprobado
 
 ## 1. Objetivo
 
@@ -177,7 +177,7 @@ Vitest dentro de workerd (`@cloudflare/vitest-plugin`, como la plantilla), con T
 ## 8. Despliegue
 
 1. `coffee-quest.<cuenta>.workers.dev` con `pnpm deploy`.
-2. Cuando esté listo: custom domain en `maurrod.dev` (propuesta: `cafe.maurrod.dev`). Es una zona en vivo: solo se agrega una
+2. Cuando esté listo: custom domain `cafe.maurrod.dev`. Es una zona en vivo: solo se agrega una
    entrada nueva y se confirma antes de tocarla.
 
 ## 9. Verificaciones contra el edge real (primera tarea con deploy)
