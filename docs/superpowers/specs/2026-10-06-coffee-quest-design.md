@@ -223,3 +223,13 @@ Vitest dentro de workerd (`@cloudflare/vitest-plugin`, como la plantilla), con T
 - Primer deploy: wrangler exige el secreto requerido antes de crear el Worker, así que se usa `--secrets-file` (ver README).
 - Custom domain `cafe.maurrod.dev` activo (2026-10-06): `scripts/partida.sh` 39/39 contra el dominio; `maurrod.dev` y `www`
   siguen respondiendo igual. `workers.dev` queda activo a propósito (`workers_dev: true`).
+
+### Auditoría (2026-10-06, cafe.maurrod.dev)
+
+- MDN HTTP Observatory: de C (55) a **A+ (150)**, 12/12. CSP con nonce y `default-src 'none'`, `frame-ancestors 'none'`,
+  `X-Frame-Options: DENY`, `Referrer-Policy: no-referrer`, CORP y COOP `same-origin`. HSTS preload y la redirección
+  http→https vienen de la zona.
+- Lighthouse 13.5 (Edge, móvil y escritorio): Performance, Accessibility y SEO 100; Best Practices 81. Lo que resta
+  viene solo de lo que inyecta la zona (JS detections de Bot Fight Mode y el beacon de Web Analytics), que se mantienen a
+  propósito. Con la CSP, los tres scripts llevan nonce (JS detections reusa el del header) y la consola queda sin
+  violaciones.
