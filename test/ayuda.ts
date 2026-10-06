@@ -50,6 +50,11 @@ export const PASOS: Record<number, (j: Jugador) => Promise<Response>> = {
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({ motivo: "necesito cafe", urgencia: 10 }),
 		}),
+	7: (j) => {
+		const fd = new FormData();
+		fd.append("formulario", new File(["firma: Ana\n"], "formulario.txt", { type: "text/plain" }));
+		return j.pedir("/rrhh/formulario", { method: "POST", body: fd });
+	},
 	// (cada tarea agrega aquí el paso de su nivel)
 };
 

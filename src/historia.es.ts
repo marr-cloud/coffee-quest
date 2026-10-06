@@ -134,5 +134,18 @@ agradecimiento (está en los headers).
 Ahora sí: el café.`,
 	),
 	perro: "sentado, con cafe, todo arde. X-Mood: this is fine",
+	noMultipart:
+		'Marta no acepta eso. El formulario va como multipart/form-data;\ncurl lo arma solo con -F:  -F "formulario=@formulario.txt"',
+	sinFormulario: 'No llegó ningún formulario. El campo se llama formulario:\n  -F "formulario=@formulario.txt"   (la @ sube el archivo)',
+	formularioGrande: "Marta mira el archivo: «¿Esto es un formulario o una novela?». Máximo 10 KB.",
+	sinFirma: "El formulario no está firmado. Debe tener una línea como:  firma: TuNombre",
+	nivel7: (o: string) =>
+		escena(
+			"09:08",
+			"RRHH",
+			"Marta sella el formulario sin leerlo. «Listo. TI ya puede atenderte.»",
+			`TI tiene la máquina buena. Pide acceso:
+    curl -b cookies.txt -c cookies.txt ${o}/ti/maquina`,
+		),
 	// (los textos de cada tarea se agregan arriba de esta línea)
 };
