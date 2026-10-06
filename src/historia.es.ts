@@ -314,6 +314,7 @@ mientras todo arde.`,
 		],
 		coleccion: "¿Prefieres Postman, Bruno o Insomnia?",
 		coleccionLink: "Descarga la colección",
+		pie: { antes: "Hecho con", amor: "amor", despues: "sobre", workers: "Cloudflare Workers", repo: "GitHub" },
 		alt: "Oficina a las 8:59: un empleado con ojeras y una taza vacía, una cafetera rota echando humo con un post-it pegado y, al fondo, una puerta entreabierta con un brillo naranja.",
 	},
 	cuerpoGrande:
