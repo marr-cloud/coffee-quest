@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { COLECCION } from "./coleccion";
 import { leerGafete } from "./gafete";
 import { H } from "./historia.es";
 import { origen, texto } from "./http";
@@ -9,7 +10,7 @@ import { PISTA } from "./pista";
 import { type Ruta, montar } from "./rutas";
 import type { AppEnv } from "./tipos";
 
-const RUTAS: Ruta[] = [...NIVELES, INCIDENTE, PISTA];
+const RUTAS: Ruta[] = [...NIVELES, INCIDENTE, PISTA, COLECCION];
 
 const app = new Hono<AppEnv>();
 

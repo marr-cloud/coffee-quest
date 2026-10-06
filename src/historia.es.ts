@@ -266,5 +266,12 @@ mientras todo arde.`,
 		};
 		return `Pista:\n${pistas[n] ?? pistas[13]}`;
 	},
+	coleccionEsqueleto:
+		"Coffee Quest en modo GUI. Una petición por nivel, todas como GET y sin headers ni body: complétalas tú. Las cookies las maneja tu cliente. Si te trabas: GET {{base}}/pista",
+	coleccionNivel: "Completa el método, los headers y el body que hagan falta.",
+	coleccionResuelta:
+		"SPOILERS: el juego entero resuelto. Corre las carpetas en orden: Camino, Final 418, Final 218 y Final 200. El 200 atiende el incidente, así que después de él ya no se puede el 218 con ese gafete. En Postman los scripts guardan solos los fragmentos y el token; en otros clientes quizá tengas que copiarlos a mano.",
+	carpetaFinal218: "Necesita el incidente abierto: córrela antes de Final 200.",
+	carpetaFinal200: "Atiende el incidente (fragmento 5) y entrega la receta completa en X-Receta.",
 	// (los textos de cada tarea se agregan arriba de esta línea)
 };
