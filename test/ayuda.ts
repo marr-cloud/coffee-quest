@@ -44,6 +44,12 @@ export const PASOS: Record<number, (j: Jugador) => Promise<Response>> = {
 	3: (j) => j.pedir("/ascensor"),
 	4: (j) => j.pedir("/piso/3"),
 	5: (j) => j.pedir("/piso/3/cocina", { method: "HEAD" }),
+	6: (j) =>
+		j.pedir("/rrhh/solicitud", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ motivo: "necesito cafe", urgencia: 10 }),
+		}),
 	// (cada tarea agrega aquí el paso de su nivel)
 };
 

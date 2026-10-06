@@ -2,12 +2,13 @@ import { Hono } from "hono";
 import { leerGafete } from "./gafete";
 import { H } from "./historia.es";
 import { origen, texto } from "./http";
+import { INCIDENTE } from "./incidente";
 import { limitar } from "./limite";
 import { NIVELES } from "./niveles";
 import { type Ruta, montar } from "./rutas";
 import type { AppEnv } from "./tipos";
 
-const RUTAS: Ruta[] = [...NIVELES];
+const RUTAS: Ruta[] = [...NIVELES, INCIDENTE];
 
 const app = new Hono<AppEnv>();
 
@@ -16,6 +17,8 @@ app.use(async (c, next) => {
 	c.set("final", null);
 	await next();
 	const estado = c.var.estado;
+	// Pista para el final secreto: solo la ve quien mira headers mientras producción arde.
+	if (estado?.incidente === "abierto") c.res.headers.set("X-Perro", H.perro);
 	console.log(
 		JSON.stringify({
 			event: "peticion",

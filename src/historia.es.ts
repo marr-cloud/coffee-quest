@@ -99,5 +99,40 @@ está en los headers.`,
 		"X-Post-It-3": `TI -> usuario: ${TI.usuario} / clave: ${TI.clave} (no se lo digas a nadie)`,
 		"X-Post-It-4": "El Content-Type importa. RRHH no lee lo que no entiende.",
 	} as Record<string, string>,
+	soloJson: 'RRHH solo lee JSON. Dile a curl qué le mandas:\n  -H "Content-Type: application/json"',
+	jsonRoto:
+		"Eso no es JSON válido. Revisa comillas y llaves.\n(¿PowerShell peleando con las comillas? Guarda el JSON en un archivo y usa  -d @archivo.json)",
+	sinMotivo: 'Falta el motivo: un texto de hasta 200 caracteres.  {"motivo": "...", "urgencia": 1-10}',
+	urgenciaAlta: "La escala va hasta 10. Te creemos, pero pon 10.",
+	urgenciaInvalida: "urgencia debe ser un número entero del 1 al 10 (sin comillas).",
+	nivel6: (nombre: string, o: string) =>
+		escena(
+			"09:06",
+			"RRHH",
+			`«Solicitud recibida», dice Marta de RRHH, sin levantar la vista.
+«Ahora el formulario C-27 firmado, ${nombre}. Subido como archivo, por favor.»
+
+En ese momento suenan todos los teléfonos del piso a la vez:
+
+  ALERTA: producción está caída. Alguien tiene que atenderlo:
+          POST ${o}/incidente/ack
+
+Tú solo querías un café.`,
+			`arma el formulario con tu firma y súbelo con -F (multipart):
+    echo "firma: ${nombre}" > formulario.txt
+    curl -b cookies.txt -c cookies.txt -F "formulario=@formulario.txt" ${o}/rrhh/formulario
+    (o atiende el incidente primero. Tú decides.)`,
+		),
+	incidenteAtendido: escena(
+		"--:--",
+		"Incidente",
+		`Dejas el café para después y abres el dashboard. Era un disco lleno:
+40 GB de logs de debug. Los borras y producción vuelve a respirar.
+Alguien en el chat te manda un aplauso y te deja un post-it de
+agradecimiento (está en los headers).
+
+Ahora sí: el café.`,
+	),
+	perro: "sentado, con cafe, todo arde. X-Mood: this is fine",
 	// (los textos de cada tarea se agregan arriba de esta línea)
 };
