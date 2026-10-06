@@ -1,16 +1,41 @@
-/**
- * Cloudflare Worker entry point.
- *
- * `CloudflareBindings` is generated from wrangler.jsonc by `pnpm cf-typegen`.
- * Never hand-write the Env interface: it drifts from the real bindings.
- */
-export default {
-	async fetch(request, env, _ctx): Promise<Response> {
-		const url = new URL(request.url);
+import { Hono } from "hono";
+import { leerGafete } from "./gafete";
+import { H } from "./historia.es";
+import { origen, texto } from "./http";
+import { limitar } from "./limite";
+import { NIVELES } from "./niveles";
+import { type Ruta, montar } from "./rutas";
+import type { AppEnv } from "./tipos";
 
-		// Structured JSON logging stays queryable in Workers Logs and Logpush.
-		console.log(JSON.stringify({ event: "request", method: request.method, path: url.pathname }));
+const RUTAS: Ruta[] = [...NIVELES];
 
-		return Response.json({ message: `Hello World from ${env.ENVIRONMENT}` });
-	},
-} satisfies ExportedHandler<CloudflareBindings>;
+const app = new Hono<AppEnv>();
+
+// Log estructurado por petición, sin IP ni nombre (spec §5). Va primero para registrar también los 429.
+app.use(async (c, next) => {
+	c.set("final", null);
+	await next();
+	const estado = c.var.estado;
+	console.log(
+		JSON.stringify({
+			event: "peticion",
+			metodo: c.req.method,
+			ruta: new URL(c.req.url).pathname,
+			status: c.res.status,
+			nivel: estado?.nivel ?? null,
+			final: c.var.final,
+		}),
+	);
+});
+app.use(leerGafete);
+app.use(limitar);
+
+for (const r of RUTAS) montar(app, r);
+
+app.notFound((c) => texto(c, H.perdido(origen(c)), 404));
+app.onError((err, c) => {
+	console.error(JSON.stringify({ event: "error", mensaje: err.message }));
+	return texto(c, H.error, 500);
+});
+
+export default app;
