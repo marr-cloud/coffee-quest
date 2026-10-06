@@ -1,7 +1,7 @@
 import { env } from "cloudflare:workers";
 import { Hono } from "hono";
 import { describe, expect, it } from "vitest";
-import { aBase64url, deBase64url } from "../src/cripto";
+import { aBase64url, deBase64url, hmac } from "../src/cripto";
 import {
 	VIGENCIA_S,
 	avanzar,
@@ -58,6 +58,14 @@ describe("gafete", () => {
 		expect((await verificar(token, S, 1_000_000 + (VIGENCIA_S - 1) * 1000)).tipo).toBe("ok");
 	});
 
+	it("la firma está atada al dominio gafete: (un MAC del payload a secas no vale)", async () => {
+		const token = await firmar(nuevoEstado("Ana"), S);
+		const [payload] = token.split(".");
+		const sinDominio = `${payload}.${aBase64url(await hmac(S, payload!))}`;
+		expect(await verificar(sinDominio, S)).toEqual({ tipo: "falso" });
+		expect((await verificar(token, S)).tipo).toBe("ok");
+	});
+
 	it("tokenTi es determinista por id y se valida", async () => {
 		const t = await tokenTi("id-1", S);
 		expect(t).toMatch(/^ti_[A-Za-z0-9_-]{43}$/);
@@ -76,6 +84,10 @@ describe("middlewares del gafete", () => {
 			await guardarGafete(c, { ...nuevoEstado("Ana"), nivel: 3 });
 			return texto(c, "ok");
 		});
+		a.get("/emitir-viejo", async (c) => {
+			await guardarGafete(c, { ...nuevoEstado("Ana", Date.now() - 29 * 24 * 60 * 60 * 1000), nivel: 3 });
+			return texto(c, "ok");
+		});
 		a.get("/n3", requiereNivel(3), (c) => texto(c, `nivel ${jugador(c).nivel}`));
 		a.get("/n5", requiereNivel(5), (c) => texto(c, "no deberías ver esto"));
 		a.get("/libre", requiereNivel(0), (c) => texto(c, `estado ${c.var.estado === null ? "vacío" : "lleno"}`));
@@ -86,9 +98,16 @@ describe("middlewares del gafete", () => {
 		const https = await app().request("https://x.test/emitir", {}, env);
 		const cookie = https.headers.getSetCookie()[0]!;
 		expect(cookie).toMatch(/^gafete=[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+;/);
-		for (const attr of ["Max-Age=2592000", "Path=/", "HttpOnly", "SameSite=Lax", "Secure"]) expect(cookie).toContain(attr);
+		// Puede caer un segundo entre iat y la emisión.
+		expect(cookie).toMatch(/Max-Age=259(1999|2000);/);
+		for (const attr of ["Path=/", "HttpOnly", "SameSite=Lax", "Secure"]) expect(cookie).toContain(attr);
 		const http = await app().request("http://x.test/emitir", {}, env);
 		expect(http.headers.getSetCookie()[0]).not.toContain("Secure");
+	});
+
+	it("Max-Age es lo que le queda al gafete, no 30 días nuevos", async () => {
+		const res = await app().request("https://x.test/emitir-viejo", {}, env);
+		expect(res.headers.getSetCookie()[0]).toMatch(/Max-Age=86(399|400);/);
 	});
 
 	it("requiereNivel: 403 sin gafete, 403 falso, 409 nivel bajo, pasa si alcanza", async () => {
