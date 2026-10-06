@@ -6,6 +6,8 @@ const esc = (s: string) => s.replace(/[&<>"']/g, (ch) => ESCAPES[ch]!);
 /** Para meter strings en el <script> sin cerrar la etiqueta. */
 const js = (s: string) => JSON.stringify(s).replaceAll("<", "\\u003c");
 
+const REPO = "https://github.com/marr-cloud/coffee-quest";
+
 const CSS = `
 :root{--fondo:#f4efe6;--texto:#1a1423;--suave:#5c677d;--marco:#1a1423;--acento:#c25700;--boton:#ff7b00;--codigo:#2f3b57;--codigo-texto:#ffd166;color-scheme:light}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--fondo:#14111c;--texto:#e9edf5;--suave:#a3adbf;--marco:#e9edf5;--acento:#ff9a3d;--codigo:#0b0910;color-scheme:dark}}
@@ -28,6 +30,9 @@ p code{background:var(--codigo);color:var(--codigo-texto);padding:1px 5px}
 .trofeos li{border:3px dashed var(--suave);padding:14px 6px;text-align:center;color:var(--suave);font-size:.85rem}
 .trofeos b{display:block;font-size:1.6rem;color:var(--texto);opacity:.5}
 .chico{margin-top:24px}
+footer{max-width:46rem;margin:0 auto;padding:16px 16px 32px;color:var(--suave);font-size:.85rem}
+footer p{margin:0;padding-top:16px;border-top:3px dashed var(--suave)}
+footer [role=img]{color:var(--acento)}
 a{color:var(--acento)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .brillo{animation:brillo 1.6s steps(2) infinite}
@@ -66,6 +71,7 @@ export function portada(origen: string, nonce: string): string {
 <p>${negociacion}</p>
 <p class="chico">${esc(P.coleccion)} <a href="/coleccion">${esc(P.coleccionLink)}</a>.</p>
 </main>
+<footer><p>${esc(P.pie.antes)} <span role="img" aria-label="${esc(P.pie.amor)}">♥</span> ${esc(P.pie.despues)} <a href="https://workers.cloudflare.com">${esc(P.pie.workers)}</a> · <a href="${REPO}">${esc(P.pie.repo)}</a></p></footer>
 <script nonce="${nonce}">
 const b = document.getElementById("copiar"), aviso = document.getElementById("aviso");
 b.addEventListener("click", async () => {

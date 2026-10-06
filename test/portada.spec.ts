@@ -45,6 +45,17 @@ describe("portada", () => {
 		expect(html).toContain('<link rel="icon" href="/favicon.svg"');
 	});
 
+	it("footer: hecho con ♥ sobre Cloudflare Workers y link al repo", async () => {
+		const html = await (await new Jugador().pedir("/", { headers: { Accept: "text/html" } })).text();
+		const footer = html.slice(html.indexOf("<footer"), html.indexOf("</footer>") + 9);
+		// Fuera de <main>: así es el landmark contentinfo de la página.
+		expect(html.indexOf("</main>")).toBeLessThan(html.indexOf("<footer"));
+		expect(footer).toContain('<span role="img" aria-label="amor">♥</span>');
+		expect(footer.replace(/<[^>]+>/g, "")).toContain("Hecho con ♥ sobre Cloudflare Workers");
+		expect(footer).toContain('href="https://workers.cloudflare.com"');
+		expect(footer).toContain('href="https://github.com/marr-cloud/coffee-quest"');
+	});
+
 	it("curl (Accept: */*) → nivel 1 en texto", async () => {
 		const res = await new Jugador().pedir("/", { headers: { Accept: "*/*" } });
 		expect(res.headers.get("content-type")).toBe("text/plain; charset=utf-8");
