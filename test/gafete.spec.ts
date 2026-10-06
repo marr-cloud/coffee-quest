@@ -40,7 +40,7 @@ describe("gafete", () => {
 		expect(await verificar(token, S)).toEqual({ tipo: "ok", estado: e });
 		const payload = JSON.parse(new TextDecoder().decode(deBase64url(token.split(".")[0]!)));
 		expect(payload.nota).toContain("base64");
-		expect(Object.keys(payload).sort()).toEqual(["iat", "id", "incidente", "nivel", "nombre", "nota", "v"]);
+		expect(Object.keys(payload).toSorted()).toEqual(["iat", "id", "incidente", "nivel", "nombre", "nota", "v"]);
 	});
 
 	it("verificar rechaza ausencia, alteración, otro secreto, formato roto y vencimiento", async () => {

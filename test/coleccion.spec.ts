@@ -21,11 +21,11 @@ describe("/coleccion", () => {
 		expect(col.info.schema).toBe(SCHEMA);
 		expect(col.item).toHaveLength(12);
 		expect(col.item[0]!.name).toBe("1. Planta baja");
-		for (const it of col.item) {
-			expect(it.request!.method).toBe("GET");
-			expect(it.request!.url).toMatch(/^\{\{base\}\}\//);
-			expect(it.request!.header).toEqual([]);
-			expect(it.request!.body).toBeUndefined();
+		for (const peticion of col.item) {
+			expect(peticion.request!.method).toBe("GET");
+			expect(peticion.request!.url).toMatch(/^\{\{base\}\}\//);
+			expect(peticion.request!.header).toEqual([]);
+			expect(peticion.request!.body).toBeUndefined();
 		}
 		expect(col.variable).toContainEqual({ key: "base", value: BASE });
 	});

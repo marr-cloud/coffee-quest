@@ -28,7 +28,7 @@ describe("receta", () => {
 		expect(await recetaCorrecta(S, "jugador-a", r.join(","))).toBe(true);
 		expect(await recetaCorrecta(S, "jugador-a", ` ${r.map((p) => p.toUpperCase()).join(" , ")} `)).toBe(true);
 		expect(await recetaCorrecta(S, "jugador-a", r.slice(0, 4).join(","))).toBe(false);
-		expect(await recetaCorrecta(S, "jugador-a", [...r].reverse().join(","))).toBe(r.join() === [...r].reverse().join());
+		expect(await recetaCorrecta(S, "jugador-a", r.toReversed().join(","))).toBe(r.join() === r.toReversed().join());
 		expect(await recetaCorrecta(S, "jugador-a", undefined)).toBe(false);
 		expect(await recetaCorrecta(S, "jugador-b", r.join(","))).toBe(false);
 	});
