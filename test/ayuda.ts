@@ -69,6 +69,12 @@ export const PASOS: Record<number, (j: Jugador) => Promise<Response>> = {
 			body: '{"modo": "barista"}',
 		}),
 	10: (j) => j.pedir("/ti/maquina/bloqueo", { method: "DELETE", headers: { Authorization: `Bearer ${j.tokenTi}` } }),
+	11: (j) =>
+		j.pedir("/cafetera/pedido", {
+			method: "POST",
+			headers: { "Content-Type": "application/x-www-form-urlencoded" },
+			body: `pedido=${encodeURIComponent("leche=si & azucar=no")}`,
+		}),
 	// (cada tarea agrega aquí el paso de su nivel)
 };
 

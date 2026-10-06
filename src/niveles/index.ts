@@ -9,6 +9,7 @@ import { formulario } from "./07-formulario";
 import { ti } from "./08-ti";
 import { config } from "./09-config";
 import { bloqueo } from "./10-bloqueo";
+import { pedido } from "./11-pedido";
 
 /** Registro ordenado de niveles: lo usan el router, /pista y /coleccion. */
-export const NIVELES: Nivel[] = [entrada, recepcion, ascensor, piso, cocina, solicitud, formulario, ti, config, bloqueo];
+export const NIVELES: Nivel[] = [entrada, recepcion, ascensor, piso, cocina, solicitud, formulario, ti, config, bloqueo, pedido];

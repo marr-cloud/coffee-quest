@@ -182,5 +182,25 @@ ni espacios sin codificar».`,
     Va como formulario (-d) en el campo pedido, a /cafetera/pedido.
     curl tiene una variante de -d que codifica esos caracteres por ti.`,
 	),
+	pedidoNoFormulario:
+		"La pantalla espera un formulario (application/x-www-form-urlencoded).\nEs lo que curl manda con -d o --data-urlencode.",
+	sinPedido: "Falta el campo pedido.  pedido=...",
+	pedidoMalCodificado: (campos: [string, string][]) =>
+		`La pantalla entendió esto:
+${campos
+	.slice(0, 5)
+	.map(([k, v]) => `  ${JSON.stringify(k.slice(0, 40))} = ${JSON.stringify(v.slice(0, 60))}`)
+	.join("\n")}
+
+No es lo que pediste. Dentro de un formulario, & separa campos y = separa
+nombre de valor. Hay que codificarlos: --data-urlencode lo hace por ti.`,
+	nivel11: escena(
+		"09:12",
+		"Cafetera de TI",
+		`«Pedido recibido: leche=si & azucar=no». La máquina espera la orden final.
+En la pantalla, un texto chiquito: «Compatible con HTCPCP/1.0 (RFC 2324)».`,
+		`la cafetera quiere que le hables en su idioma. Averigua qué es HTCPCP;
+    el endpoint es /cafetera.`,
+	),
 	// (los textos de cada tarea se agregan arriba de esta línea)
 };
