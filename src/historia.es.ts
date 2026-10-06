@@ -270,6 +270,21 @@ mientras todo arde.`,
 	coleccionEsqueleto:
 		"Coffee Quest en modo GUI. Una petición por nivel, todas como GET y sin headers ni body: complétalas tú. Las cookies las maneja tu cliente. Si te trabas: GET {{base}}/pista",
 	coleccionNivel: "Completa el método, los headers y el body que hagan falta.",
+	/** Escena de cada nivel en la colección esqueleto: la historia sin el comando. */
+	escenasColeccion: {
+		1: "Planta baja, 08:59. Primer día, daily a las 9:15 y cero cafeína. Empieza por la entrada.",
+		2: "Recepción. Preséntate con tu nombre y di a qué piso vas. Te van a dar un gafete: guárdalo.",
+		3: "Ascensor. El torniquete solo gira si llevas el gafete encima.",
+		4: "Piso 3. Un cartel dice que la cocina se mudó. Fíjate en lo que trae la flecha antes de seguirla.",
+		5: "Cocina. La cafetera está rota y tiene algo pegado atrás. No está en el cuerpo de la respuesta.",
+		6: "RRHH. Quieren tu solicitud por escrito, en el formato que RRHH entiende.",
+		7: "RRHH otra vez. Ahora el formulario C-27, firmado y subido como archivo.",
+		8: "TI. La máquina buena está aquí, pero piden usuario y clave. ¿Viste algún post-it?",
+		9: "TI. La máquina está en modo ahorro. Con el token de TI, ponla en modo barista.",
+		10: "TI. Queda el candado. Con el mismo token, quítalo.",
+		11: "La pantalla espera tu pedido: leche=si & azucar=no. El teclado no entiende & ni = sin codificar.",
+		12: "La cafetera habla HTCPCP (RFC 2324). Su método no pasa por el edificio: hay que disfrazarlo.",
+	} as Record<number, string>,
 	coleccionResuelta:
 		"SPOILERS: el juego entero resuelto. Corre las carpetas en orden: Camino, Final 418, Final 218 y Final 200. El 200 atiende el incidente, así que después de él ya no se puede el 218 con ese gafete. En Postman los scripts guardan solos los fragmentos y el token; en otros clientes quizá tengas que copiarlos a mano.",
 	carpetaFinal218: "Necesita el incidente abierto: córrela antes de Final 200.",
