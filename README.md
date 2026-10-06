@@ -38,6 +38,8 @@ bash scripts/partida.sh http://localhost:8787   # juega los tres finales con cur
 
 ## Deploy
 
+Hasta que exista `GAFETE_SECRET` (32 caracteres o más) el Worker responde 500: falla cerrado en vez de firmar gafetes con una clave débil.
+
 ```sh
 npx wrangler login
 pnpm deploy

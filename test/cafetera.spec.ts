@@ -68,6 +68,16 @@ describe("nivel 12: la cafetera", () => {
 		expect(cuerpo).toContain(receta.join(", "));
 	});
 
+	it("reusar el gafete de antes del ack no da el 200", async () => {
+		const j = new Jugador();
+		await jugarHasta(j, 11);
+		const previo = j.gafete;
+		await j.pedir("/incidente/ack", { method: "POST" });
+		j.gafete = previo;
+		const receta = [1, 2, 3, 4, 5].map((n) => j.receta[n]).join(",");
+		expect((await brew(j, { "X-Receta": receta })).status).toBe(418);
+	});
+
 	it("después del ack el 218 ya no se puede; sin receta queda en 418", async () => {
 		const j = new Jugador();
 		await jugarHasta(j, 11);

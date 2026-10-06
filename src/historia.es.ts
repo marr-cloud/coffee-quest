@@ -300,5 +300,7 @@ mientras todo arde.`,
 		coleccionLink: "Descarga la colección",
 		alt: "Oficina a las 8:59: un empleado con ojeras y una taza vacía, una cafetera rota echando humo con un post-it pegado y, al fondo, una puerta entreabierta con un brillo naranja.",
 	},
+	cuerpoGrande:
+		"Eso pesa demasiado: el edificio no recibe paquetes de más de 16 KB.\n(413 Content Too Large. Ningún nivel necesita tanto.)",
 	// (los textos de cada tarea se agregan arriba de esta línea)
 };

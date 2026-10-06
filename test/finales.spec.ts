@@ -10,6 +10,8 @@ describe("finales", () => {
 		{ incidente: "atendido", mood: undefined, recetaOk: true, final: 200 },
 		{ incidente: "abierto", mood: "todo mal", recetaOk: false, final: 418 },
 		{ incidente: null, mood: "this is fine", recetaOk: false, final: 418 },
+		// 200 y 218 se excluyen (spec §3): con el incidente abierto, la receta sola no alcanza.
+		{ incidente: "abierto", mood: undefined, recetaOk: true, final: 418 },
 	] as const)("incidente=$incidente mood=$mood receta=$recetaOk → $final", ({ incidente, mood, recetaOk, final }) => {
 		expect(decidirFinal({ incidente, mood, recetaOk })).toBe(final);
 	});

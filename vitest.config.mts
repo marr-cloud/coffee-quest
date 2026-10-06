@@ -7,7 +7,7 @@ export default defineConfig({
 	plugins: [
 		cloudflareTest({
 			wrangler: { configPath: "./wrangler.jsonc" },
-			miniflare: { bindings: { GAFETE_SECRET: "secreto-solo-para-tests" } },
+			miniflare: { bindings: { GAFETE_SECRET: "secreto-solo-para-tests-no-es-el-real" } },
 		}),
 	],
 });
