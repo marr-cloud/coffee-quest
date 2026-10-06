@@ -1,0 +1,32 @@
+{
+	"compilerOptions": {
+		/* Reference: https://www.typescriptlang.org/tsconfig */
+
+		/* Language and environment: workerd, not Node and not the DOM. */
+		"target": "es2024",
+		"lib": ["es2024"],
+
+		/* Modules: Wrangler bundles with esbuild, so emit nothing and resolve like a bundler. */
+		"module": "es2022",
+		"moduleResolution": "Bundler",
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"verbatimModuleSyntax": true,
+		"allowSyntheticDefaultImports": true,
+		"forceConsistentCasingInFileNames": true,
+		"noEmit": true,
+
+		/* Type checking: strict, plus the extra safety nets worth having in a template. */
+		"strict": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noUncheckedIndexedAccess": true,
+		"noImplicitOverride": true,
+		"noFallthroughCasesInSwitch": true,
+
+		"skipLibCheck": true,
+		"types": ["./worker-configuration.d.ts", "node"]
+	},
+	"include": ["worker-configuration.d.ts", "src/**/*.ts"],
+	"exclude": ["test"]
+}

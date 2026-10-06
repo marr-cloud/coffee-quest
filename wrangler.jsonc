@@ -1,0 +1,62 @@
+/**
+ * For more details on how to configure Wrangler, refer to:
+ * https://developers.cloudflare.com/workers/wrangler/configuration/
+ *
+ * After changing any binding below, run `pnpm cf-typegen` to regenerate
+ * `worker-configuration.d.ts`. Never edit that file by hand.
+ */
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "cloudflare-workers-template",
+	"main": "src/index.ts",
+	"compatibility_date": "2026-08-31",
+	"compatibility_flags": ["nodejs_compat"],
+	"upload_source_maps": true,
+	/**
+	 * Observability
+	 * https://developers.cloudflare.com/workers/observability/logs/workers-logs/
+	 * `head_sampling_rate: 1` keeps every invocation. Lower it on high-traffic
+	 * Workers to control ingestion cost.
+	 */
+	"observability": {
+		"enabled": true,
+		"head_sampling_rate": 1,
+		"logs": {
+			"enabled": true,
+			"invocation_logs": true,
+		},
+	},
+	/**
+	 * Environment Variables
+	 * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
+	 * Note: never put sensitive data here. Use secrets instead:
+	 * https://developers.cloudflare.com/workers/configuration/secrets/
+	 */
+	"vars": {
+		"ENVIRONMENT": "development",
+	},
+	/**
+	 * Smart Placement
+	 * https://developers.cloudflare.com/workers/configuration/smart-placement/
+	 */
+	// "placement": { "mode": "smart" },
+	/**
+	 * Bindings
+	 * Bindings let your Worker interact with Cloudflare Developer Platform resources:
+	 * databases, object storage, AI inference, real-time communication and more.
+	 * https://developers.cloudflare.com/workers/runtime-apis/bindings/
+	 */
+	// "kv_namespaces": [{ "binding": "MY_KV", "id": "<namespace-id>" }],
+	// "r2_buckets": [{ "binding": "MY_BUCKET", "bucket_name": "<bucket-name>" }],
+	// "d1_databases": [{ "binding": "MY_DB", "database_name": "<name>", "database_id": "<id>" }],
+	/**
+	 * Static Assets
+	 * https://developers.cloudflare.com/workers/static-assets/binding/
+	 */
+	// "assets": { "directory": "./public/", "binding": "ASSETS" },
+	/**
+	 * Service Bindings (Worker-to-Worker calls without a public HTTP hop)
+	 * https://developers.cloudflare.com/workers/wrangler/configuration/#service-bindings
+	 */
+	// "services": [{ "binding": "MY_SERVICE", "service": "my-service" }],
+}

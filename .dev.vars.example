@@ -1,0 +1,7 @@
+# Copy to `.dev.vars` for local development (`wrangler dev`).
+# `.dev.vars` is gitignored; this example file is not.
+#
+# In production, set the same keys as secrets instead:
+#   npx wrangler secret put MY_API_KEY
+#
+# MY_API_KEY="local-development-value"
