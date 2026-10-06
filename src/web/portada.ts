@@ -37,7 +37,8 @@ a{color:var(--acento)}
 @media (prefers-reduced-motion:reduce){.brillo,.humo{animation:none}}
 `;
 
-export function portada(origen: string): string {
+/** `nonce` debe coincidir con el de la CSP de la respuesta (ver cspPortada). */
+export function portada(origen: string, nonce: string): string {
 	const P = H.portada;
 	const comando = `curl ${esc(origen)}`;
 	const negociacion = P.negociacion.map((parte, i) => (i % 2 ? `<code>${esc(parte)}</code>` : esc(parte))).join(" ");
@@ -49,8 +50,8 @@ export function portada(origen: string): string {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(P.titulo)}</title>
 <meta name="description" content="${esc(P.descripcion)}">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☕</text></svg>">
-<style>${CSS}</style>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style nonce="${nonce}">${CSS}</style>
 </head>
 <body>
 <main>
@@ -65,7 +66,7 @@ export function portada(origen: string): string {
 <p>${negociacion}</p>
 <p class="chico">${esc(P.coleccion)} <a href="/coleccion">${esc(P.coleccionLink)}</a>.</p>
 </main>
-<script>
+<script nonce="${nonce}">
 const b = document.getElementById("copiar"), aviso = document.getElementById("aviso");
 b.addEventListener("click", async () => {
 	let txt = ${js(P.copiado)};
