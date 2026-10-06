@@ -52,7 +52,7 @@ describe("portada", () => {
 	});
 
 	it("escapa el origen", () => {
-		const html = portada('https://x.test"><script>alert(1)</script>');
+		const html = portada('https://x.test"><script>alert(1)</script>', "nonce-fijo");
 		expect(html).not.toContain("<script>alert(1)");
 		expect(html).toContain("&quot;&gt;&lt;script&gt;");
 	});

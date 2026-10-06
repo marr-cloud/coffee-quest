@@ -9,6 +9,7 @@ import { limitar } from "./limite";
 import { NIVELES } from "./niveles";
 import { PISTA } from "./pista";
 import { type Ruta, montar } from "./rutas";
+import { CSP_BASE, HEADERS_SEGURIDAD } from "./seguridad";
 import type { AppEnv } from "./tipos";
 
 const RUTAS: Ruta[] = [...NIVELES, INCIDENTE, PISTA, COLECCION];
@@ -22,8 +23,9 @@ app.use(async (c, next) => {
 	c.set("final", null);
 	await next();
 	const estado = c.var.estado;
-	// Las respuestas repiten texto del jugador: que ningún navegador adivine otro tipo de contenido.
-	c.res.headers.set("X-Content-Type-Options", "nosniff");
+	// Headers de seguridad en todas las respuestas. La portada trae su propia CSP con nonce; el resto, la cerrada.
+	for (const [nombre, valor] of Object.entries(HEADERS_SEGURIDAD)) c.res.headers.set(nombre, valor);
+	if (!c.res.headers.has("Content-Security-Policy")) c.res.headers.set("Content-Security-Policy", CSP_BASE);
 	// Pista para el final secreto: solo la ve quien mira headers mientras producción arde.
 	if (estado?.incidente === "abierto") c.res.headers.set("X-Perro", H.perro);
 	console.log(
