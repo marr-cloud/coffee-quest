@@ -124,6 +124,8 @@ src/incidente.ts      POST /incidente/ack
 src/finales.ts        regla 218 > 200 > 418
 src/coleccion.ts      genera la colección Postman desde el registro de niveles
 src/historia.es.ts    todos los textos de la historia y pistas
+src/web/escena.ts     matriz de píxeles + paleta → SVG
+src/web/portada.ts    HTML de la página para navegador
 ```
 
 Respuestas en `text/plain; charset=utf-8`, pensadas para terminal: escena breve, arte ASCII mínimo y una línea
@@ -160,6 +162,24 @@ Formato Postman Collection v2.1: lo importan Postman, Insomnia, Bruno, Hoppscotc
 - `Content-Disposition: attachment; filename="coffee-quest.postman_collection.json"` → se descarga con `curl -OJ`.
 - Se genera desde el registro de niveles (`coleccion` en cada definición), así no se desincroniza.
 
+## 6b. Página para navegador (`GET /` con `Accept: text/html`)
+
+`GET /` hace content negotiation: si `Accept` incluye `text/html` (un navegador) responde una página HTML; si no (curl manda
+`*/*`), responde el nivel 1 en texto. La respuesta lleva `Vary: Accept`. La página explica en una línea que eso es content
+negotiation. No permite jugar: su único objetivo es mandarte a la terminal.
+
+- **Escena pixel art:** la oficina a las 8:59, el empleado con ojeras, la cafetera rota con post-it, vapor animado con CSS y
+  una puerta entreabierta con brillo naranja al fondo (guiño al 218). Se genera como SVG desde una matriz de píxeles en código
+  (`src/web/escena.ts`, un `rect` por tramo horizontal, `shape-rendering="crispEdges"`), paleta de 16 colores definida ahí.
+- **Gancho:** "Este juego no se juega aquí. Se juega en tu terminal."
+- **Comando** `curl <origen>` con botón de copiar y nota para `curl.exe` en PowerShell.
+- **Tres trofeos bloqueados:** `418`, `200` y `???`.
+- **Link chico** a `/coleccion` para Postman, Bruno y similares.
+- Una sola página autocontenida (HTML + CSS inline + un script mínimo para copiar), sin dependencias externas, legible en
+  móvil, con modo claro/oscuro según `prefers-color-scheme` y `prefers-reduced-motion` respetado. El texto alternativo de
+  la escena la describe.
+- **Reemplazo por Aseprite (después, fuera de v1):** exportar PNG, servirlo con Static Assets y cambiar el `<svg>` por `<img>`.
+
 ## 7. Pruebas
 
 Vitest dentro de workerd (`@cloudflare/vitest-plugin`, como la plantilla), con TDD:
@@ -169,6 +189,7 @@ Vitest dentro de workerd (`@cloudflare/vitest-plugin`, como la plantilla), con T
 - Integración con `exports.default.fetch`: una partida completa por final, manejando cookies como lo haría curl; 409 al
   saltar niveles; revisitar niveles no baja el progreso.
 - `coleccion`: JSON con la estructura v2.1 y una request por nivel.
+- Portada: `GET /` con `Accept: text/html` devuelve HTML con `Vary: Accept` y el comando; sin `text/html` devuelve el nivel 1.
 - `scripts/partida.sh` (bash + curl): juega los tres finales contra una URL dada (`wrangler dev` o el deploy). Cubre lo que
   los tests no pueden: el edge real.
 
