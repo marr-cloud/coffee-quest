@@ -11,6 +11,14 @@ export function texto(c: Context, cuerpo: string, status = 200, headers: Record<
 	return new Response(base.body, { status, statusText, headers: base.headers });
 }
 
+/**
+ * Cuerpo de la petición como texto UTF-8. c.req.text() hace que workerd avise "body which does not appear to
+ * be text" con tipos como x-www-form-urlencoded o message/coffeepot; decodificar a mano evita ese ruido.
+ */
+export async function cuerpoTexto(c: Context): Promise<string> {
+	return new TextDecoder().decode(await c.req.arrayBuffer());
+}
+
 /** Content-Type sin parámetros y en minúsculas ("" si no viene). */
 export function tipoContenido(c: Context): string {
 	return (c.req.header("Content-Type") ?? "").split(";")[0]!.trim().toLowerCase();

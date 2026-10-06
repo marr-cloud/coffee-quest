@@ -1,7 +1,7 @@
 import { ESTADO_HTTP, decidirFinal } from "../finales";
 import { avanzar, guardarGafete, jugador } from "../gafete";
 import { H } from "../historia.es";
-import { texto, tipoContenido } from "../http";
+import { cuerpoTexto, texto, tipoContenido } from "../http";
 import { recetaCompleta, recetaCorrecta } from "../receta";
 import type { Nivel } from "../rutas";
 
@@ -27,7 +27,7 @@ export const cafetera: Nivel = {
 		if (metodo !== "BREW") return texto(c, H.soloBrew, 405, { Allow: "BREW" });
 		if (tipoContenido(c) !== "message/coffeepot") return texto(c, H.soloCoffeepot, 415);
 		if (!c.req.header("Accept-Additions")?.trim()) return texto(c, H.sinAdiciones, 400);
-		if ((await c.req.text()).trim() !== "start") return texto(c, H.sinStart, 400);
+		if ((await cuerpoTexto(c)).trim() !== "start") return texto(c, H.sinStart, 400);
 		const previo = jugador(c);
 		const recetaOk = await recetaCorrecta(c.env.GAFETE_SECRET, previo.id, c.req.header("X-Receta"));
 		const final = decidirFinal({ incidente: previo.incidente, mood: c.req.header("X-Mood"), recetaOk });

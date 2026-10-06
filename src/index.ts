@@ -22,6 +22,8 @@ app.use(async (c, next) => {
 	c.set("final", null);
 	await next();
 	const estado = c.var.estado;
+	// Las respuestas repiten texto del jugador: que ningún navegador adivine otro tipo de contenido.
+	c.res.headers.set("X-Content-Type-Options", "nosniff");
 	// Pista para el final secreto: solo la ve quien mira headers mientras producción arde.
 	if (estado?.incidente === "abierto") c.res.headers.set("X-Perro", H.perro);
 	console.log(

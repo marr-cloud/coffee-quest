@@ -1,6 +1,6 @@
 import { avanzar, guardarGafete, jugador } from "../gafete";
 import { H } from "../historia.es";
-import { origen, texto, tipoContenido } from "../http";
+import { cuerpoTexto, origen, texto, tipoContenido } from "../http";
 import type { Nivel } from "../rutas";
 import type { Estado } from "../tipos";
 
@@ -24,7 +24,7 @@ export const solicitud: Nivel = {
 		if (tipoContenido(c) !== "application/json") return texto(c, H.soloJson, 415);
 		let datos: unknown;
 		try {
-			datos = JSON.parse(await c.req.text());
+			datos = JSON.parse(await cuerpoTexto(c));
 		} catch {
 			return texto(c, H.jsonRoto, 400);
 		}

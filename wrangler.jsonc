@@ -27,15 +27,6 @@
 		},
 	},
 	/**
-	 * Environment Variables
-	 * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
-	 * Note: never put sensitive data here. Use secrets instead:
-	 * https://developers.cloudflare.com/workers/configuration/secrets/
-	 */
-	"vars": {
-		"ENVIRONMENT": "development",
-	},
-	/**
 	 * Secretos requeridos. GAFETE_SECRET firma el gafete (HMAC).
 	 * Local: .dev.vars · Producción: npx wrangler secret put GAFETE_SECRET
 	 */
