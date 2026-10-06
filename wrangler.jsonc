@@ -7,7 +7,7 @@
  */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "cloudflare-workers-template",
+	"name": "coffee-quest",
 	"main": "src/index.ts",
 	"compatibility_date": "2026-08-31",
 	"compatibility_flags": ["nodejs_compat"],
@@ -35,6 +35,16 @@
 	"vars": {
 		"ENVIRONMENT": "development",
 	},
+	/**
+	 * Secretos requeridos. GAFETE_SECRET firma el gafete (HMAC).
+	 * Local: .dev.vars · Producción: npx wrangler secret put GAFETE_SECRET
+	 */
+	"secrets": { "required": ["GAFETE_SECRET"] },
+	/**
+	 * Rate limiting: freno anti-abuso, aproximado y por ubicación.
+	 * https://developers.cloudflare.com/workers/runtime-apis/bindings/rate-limit/
+	 */
+	"ratelimits": [{ "name": "RATE_LIMITER", "namespace_id": "2180", "simple": { "limit": 60, "period": 60 } }],
 	/**
 	 * Smart Placement
 	 * https://developers.cloudflare.com/workers/configuration/smart-placement/
